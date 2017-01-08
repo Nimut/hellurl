@@ -1,9 +1,10 @@
 <?php
-namespace Tx\Realurl\View;
+namespace Nimut\Hellurl\View;
 
 /***************************************************************
  *  Copyright notice
  *
+ *  (c) 2017 Nicole Cordes (typo3@cordes.co)
  *  (c) 2014 Helmut Hummel <helmut.hummel@typo3.org>
  *  All rights reserved
  *
@@ -26,6 +27,7 @@ namespace Tx\Realurl\View;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 
@@ -52,7 +54,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * @var array
      */
-    protected $iconMapping = array(
+    protected $iconMapping = [
         'gfx/zoom.gif' => 'actions-search',
         'gfx/edit2.gif' => 'actions-open',
         'gfx/garbage.gif' => 'actions-delete',
@@ -60,43 +62,43 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         'gfx/clip_copy.gif' => 'actions-edit-copy',
         'gfx/up.gif' => 'actions-move-up',
         'gfx/new_el.gif' => 'actions-document-new',
-    );
+    ];
 
     /**
      *
      */
     public function __construct()
     {
-        $GLOBALS['LANG']->includeLLfile('EXT:realurl/Resources/Private/Language/locallang_info_module.xml');
+        $GLOBALS['LANG']->includeLLfile('EXT:hellurl/Resources/Private/Language/locallang_info_module.xml');
     }
 
     /**
      * Returns the menu array
      *
-     * @return	array
+     * @return    array
      */
     public function modMenu()
     {
-        $modMenu = array(
-            'depth' => array(
+        $modMenu = [
+            'depth' => [
                 0 => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.depth_0'),
                 1 => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.depth_1'),
                 2 => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.depth_2'),
                 3 => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.depth_3'),
                 99 => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.depth_infi'),
-            ),
-            'type' => array(
+            ],
+            'type' => [
                 'pathcache' => 'ID-to-path mapping',
                 'decode' => 'Decode cache',
                 'encode' => 'Encode cache',
                 'uniqalias' => 'Unique Aliases',
                 'redirects' => 'Redirects',
                 'config' => 'Configuration',
-                'log' => 'Error Log'
-            )
-        );
+                'log' => 'Error Log',
+            ],
+        ];
 
-        $modMenu['type'] = \TYPO3\CMS\Backend\Utility\BackendUtility::unsetMenuItems($this->pObj->modTSconfig['properties'], $modMenu['type'], 'menu.realurl_type');
+        $modMenu['type'] = \TYPO3\CMS\Backend\Utility\BackendUtility::unsetMenuItems($this->pObj->modTSconfig['properties'], $modMenu['type'], 'menu.hellurl_type');
 
         return $modMenu;
     }
@@ -104,7 +106,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * MAIN function for cache information
      *
-     * @return	string		Output HTML for the module.
+     * @return    string        Output HTML for the module.
      */
     public function main()
     {
@@ -123,6 +125,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 
         return $result;
     }
+
     /**
      * Enter description here ...
      */
@@ -187,11 +190,11 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     {
         $this->pObj->doc->inDocStyles .= '
 			TABLE.c-list TR TD { white-space: nowrap; vertical-align: top; }
-			TABLE#tx-realurl-pathcacheTable TD { vertical-align: top; }
+			TABLE#tx-hellurl-pathcacheTable TD { vertical-align: top; }
 			FIELDSET { border: none; padding: 16px 0; }
 			FIELDSET DIV { clear: left; border-collapse: collapse; margin-bottom: 5px; }
 			FIELDSET DIV LABEL { display: block; float: left; width: 100px; }
-		' . \Tx\Realurl\ViewHelpers\PageBrowserViewHelper::getInlineStyles();
+		' . \Nimut\Hellurl\ViewHelpers\PageBrowserViewHelper::getInlineStyles();
     }
 
     /**
@@ -216,18 +219,18 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         /** @var \TYPO3\CMS\Backend\Tree\View\PageTreeView $tree */
         $tree->addField('nav_title', true);
         $tree->addField('alias', true);
-        $tree->addField('tx_realurl_pathsegment', true);
+        $tree->addField('tx_hellurl_pathsegment', true);
         $tree->init('AND ' . $GLOBALS['BE_USER']->getPagePermsClause(1));
 
         $treeStartingPoint = intval($this->pObj->id);
         $treeStartingRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord('pages', $treeStartingPoint);
         \TYPO3\CMS\Backend\Utility\BackendUtility::workspaceOL('pages', $treeStartingRecord);
 
-            // Creating top icon; the current page
-        $tree->tree[] = array(
+        // Creating top icon; the current page
+        $tree->tree[] = [
             'row' => $treeStartingRecord,
-            'HTML' => $tree->getIcon($treeStartingRecord)
-        );
+            'HTML' => $tree->getIcon($treeStartingRecord),
+        ];
 
         // Create the tree from starting point:
         if ($this->pObj->MOD_SETTINGS['depth'] > 0) {
@@ -245,47 +248,48 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Rendering the information
      *
-     * @param	array		The Page tree data
-     * @return	string		HTML for the information table.
+     * @param    array        The Page tree data
+     *
+     * @return    string        HTML for the information table.
      */
     public function renderModule(\TYPO3\CMS\Backend\Tree\View\PageTreeView $tree)
     {
 
-            // Initialize:
+        // Initialize:
         $searchPath = trim(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('pathPrefixSearch'));
         $cmd = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET('cmd');
         $entry = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET('entry');
         $searchForm_replace = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST('_replace');
         $searchForm_delete = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST('_delete');
 
-        $trackSameUrl = array();
+        $trackSameUrl = [];
         $this->searchResultCounter = 0;
 
-            // Traverse tree:
+        // Traverse tree:
         $output = '';
-        $cc=0;
+        $cc = 0;
         foreach ($tree->tree as $row) {
 
-                // Get all pagepath entries for page:
+            // Get all pagepath entries for page:
             $pathCacheInfo = $this->getPathCache($row['row']['uid']);
 
-                // Row title:
+            // Row title:
             $rowTitle = $row['HTML'] . \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordTitle('pages', $row['row'], true);
             $cellAttrib = ($row['row']['_CSSCLASS'] ? ' class="' . $row['row']['_CSSCLASS'] . '"' : '');
 
-                // Add at least one empty element:
+            // Add at least one empty element:
             if (!count($pathCacheInfo)) {
 
-                        // Add title:
-                    $tCells = array();
-                $tCells[]='<td nowrap="nowrap"' . $cellAttrib . '>' . $rowTitle . '</td>';
+                // Add title:
+                $tCells = [];
+                $tCells[] = '<td nowrap="nowrap"' . $cellAttrib . '>' . $rowTitle . '</td>';
 
-                        // Empty row:
-                    $tCells[]='<td colspan="10" align="center">&nbsp;</td>';
+                // Empty row:
+                $tCells[] = '<td colspan="10" align="center">&nbsp;</td>';
 
-                        // Compile Row:
-                    $output.= '
-						<tr class="bgColor' . ($cc%2 ? '-20':'-10') . '">
+                // Compile Row:
+                $output .= '
+						<tr class="bgColor' . ($cc % 2 ? '-20' : '-10') . '">
 							' . implode('
 							', $tCells) . '
 						</tr>';
@@ -293,55 +297,60 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             } else {
                 foreach ($pathCacheInfo as $c => $inf) {
 
-                        // Init:
+                    // Init:
                     $deletedEntry = false;
                     $hash = $inf['pagepath'] . '|' . $inf['rootpage_id'] . '|' . $inf['language_id'];    // MP is not a part of this because the path itself should be different simply because the MP makes a different path! (see UriGeneratorAndResolver::pagePathtoID())
 
-                        // Add icon/title and ID:
-                    $tCells = array();
+                    // Add icon/title and ID:
+                    $tCells = [];
                     if (!$c) {
-                        $tCells[]='<td nowrap="nowrap" rowspan="' . count($pathCacheInfo) . '"' . $cellAttrib . '>' . $rowTitle . '</td>';
-                        $tCells[]='<td rowspan="' . count($pathCacheInfo) . '">' . $inf['page_id'] . '</td>';
+                        $tCells[] = '<td nowrap="nowrap" rowspan="' . count($pathCacheInfo) . '"' . $cellAttrib . '>' . $rowTitle . '</td>';
+                        $tCells[] = '<td rowspan="' . count($pathCacheInfo) . '">' . $inf['page_id'] . '</td>';
                     }
 
-                        // Add values from alternative field used to generate URL:
+                    // Add values from alternative field used to generate URL:
                     $baseRow = $row['row'];    // page row as base.
-                    $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::editOnClick('&edit[pages][' . $row['row']['uid'] . ']=edit&columnsOnly=title,nav_title,alias,tx_realurl_pathsegment', $this->pObj->doc->backPath);
+                    $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::editOnClick('&edit[pages][' . $row['row']['uid'] . ']=edit&columnsOnly=title,nav_title,alias,tx_hellurl_pathsegment', $this->pObj->doc->backPath);
                     $editIcon = '<a href="#" onclick="' . htmlspecialchars($onClick) . '">' .
-                                $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
-                                '</a>';
+                        $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
+                        '</a>';
                     $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::viewOnClick($row['row']['uid'], $this->pObj->doc->backPath, '', '', '', '');
-                    $editIcon.= '<a href="#" onclick="' . htmlspecialchars($onClick) . '">' .
-                                $this->getIcon('gfx/zoom.gif', 'width="12" height="12"', $this->pObj->doc->backPath) .
-                                 '</a>';
+                    $editIcon .= '<a href="#" onclick="' . htmlspecialchars($onClick) . '">' .
+                        $this->getIcon('gfx/zoom.gif', 'width="12" height="12"', $this->pObj->doc->backPath) .
+                        '</a>';
 
-                    if ($inf['language_id']>0) {    // For alternative languages, show another list of fields, form page overlay record:
+                    if ($inf['language_id'] > 0) {    // For alternative languages, show another list of fields, form page overlay record:
                         $editIcon = '';
                         list($olRec) = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordsByField('pages_language_overlay', 'pid', $row['row']['uid'], ' AND sys_language_uid=' . intval($inf['language_id']));
                         if (is_array($olRec)) {
                             $baseRow = array_merge($baseRow, $olRec);
                             $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::editOnClick('&edit[pages_language_overlay][' . $olRec['uid'] . ']=edit&columnsOnly=title,nav_title', $this->pObj->doc->backPath);
                             $editIcon = '<a href="#" onclick="' . htmlspecialchars($onClick) . '">' .
-                                         $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
-                                        '</a>';
+                                $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
+                                '</a>';
                             $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::viewOnClick($row['row']['uid'], $this->pObj->doc->backPath, '', '', '', '&L=' . $olRec['sys_language_uid']);
-                            $editIcon.= '<a href="#" onclick="' . htmlspecialchars($onClick) . '">' .
-                                        $this->getIcon('gfx/zoom.gif', 'width="12" height="12"', $this->pObj->doc->backPath) .
-                                        '</a>';
+                            $editIcon .= '<a href="#" onclick="' . htmlspecialchars($onClick) . '">' .
+                                $this->getIcon('gfx/zoom.gif', 'width="12" height="12"', $this->pObj->doc->backPath) .
+                                '</a>';
                         } else {
-                            $baseRow = array();
+                            $baseRow = [];
                         }
                     }
-                    $tCells[]='<td>' . $editIcon . '</td>';
+                    $tCells[] = '<td>' . $editIcon . '</td>';
 
-                        // 	Sources for segment:
-                    $sources = count($baseRow) ? implode(' | ', array($baseRow['tx_realurl_pathsegment'], $baseRow['alias'], $baseRow['nav_title'], $baseRow['title'])) : '';
-                    $tCells[]='<td nowrap="nowrap">' . htmlspecialchars($sources) . '</td>';
+                    // 	Sources for segment:
+                    $sources = count($baseRow) ? implode(' | ', [
+                        $baseRow['tx_hellurl_pathsegment'],
+                        $baseRow['alias'],
+                        $baseRow['nav_title'],
+                        $baseRow['title'],
+                    ]) : '';
+                    $tCells[] = '<td nowrap="nowrap">' . htmlspecialchars($sources) . '</td>';
 
-                        // Show page path:
+                    // Show page path:
                     if (strcmp($searchPath, '') && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($inf['pagepath'], $searchPath) && !$inf['expire']) {
 
-                            // Delete entry:
+                        // Delete entry:
                         if ($searchForm_delete) {
                             $this->deletePathCacheEntry($inf['cache_id']);
                             $deletedEntry = true;
@@ -352,62 +361,62 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                                 $replacePart . substr($inf['pagepath'], strlen($searchPath)));
 
                             $pagePath =
-                                    '<span class="typo3-red">' .
-                                    htmlspecialchars($replacePart) .
-                                    '</span>' .
-                                    htmlspecialchars(substr($inf['pagepath'], strlen($searchPath)));
+                                '<span class="typo3-red">' .
+                                htmlspecialchars($replacePart) .
+                                '</span>' .
+                                htmlspecialchars(substr($inf['pagepath'], strlen($searchPath)));
                         } else {
                             $pagePath =
-                                    '<span class="typo3-red">' .
-                                    htmlspecialchars(substr($inf['pagepath'], 0, strlen($searchPath))) .
-                                    '</span>' .
-                                    htmlspecialchars(substr($inf['pagepath'], strlen($searchPath)));
+                                '<span class="typo3-red">' .
+                                htmlspecialchars(substr($inf['pagepath'], 0, strlen($searchPath))) .
+                                '</span>' .
+                                htmlspecialchars(substr($inf['pagepath'], strlen($searchPath)));
                             $this->searchResultCounter++;
                         }
                     } else {
                         // Delete entries:
-                        if ($cmd==='edit' && (!strcmp($entry, $inf['cache_id']) || !strcmp($entry, 'ALL'))) {
+                        if ($cmd === 'edit' && (!strcmp($entry, $inf['cache_id']) || !strcmp($entry, 'ALL'))) {
                             $pagePath = '<input type="text" name="edit[' . $inf['cache_id'] . ']" value="' . htmlspecialchars($inf['pagepath']) . '" size="40" />';
-                            if ($cmd==='edit' && $entry!='ALL') {
-                                $pagePath.= $this->saveCancelButtons();
+                            if ($cmd === 'edit' && $entry != 'ALL') {
+                                $pagePath .= $this->saveCancelButtons();
                             }
                         } else {
                             $pagePath = htmlspecialchars($inf['pagepath']);
                         }
                     }
 
-                    $tCells[]='<td' . ($inf['expire'] ? ' style="font-style: italic; color:#999999;"' : '') . '>' . $pagePath . '</td>';
+                    $tCells[] = '<td' . ($inf['expire'] ? ' style="font-style: italic; color:#999999;"' : '') . '>' . $pagePath . '</td>';
 
                     if ($deletedEntry) {
-                        $tCells[]='<td>&nbsp;</td>';
+                        $tCells[] = '<td>&nbsp;</td>';
                     } else {
-                        $tCells[]='<td>' .
-                                '<a href="' . $this->linkSelf('&cmd=delete&entry=' . $inf['cache_id']) . '">' .
-                                $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete') .
-                                '</a>' .
-                                '<a href="' . $this->linkSelf('&cmd=edit&entry=' . $inf['cache_id']) . '">' .
-                                $this->getIcon('gfx/edit2.gif', 'width="12" height="12"', $this->pObj->doc->backPath, 'Edit') .
-                                '</a>' .
-                                '<a href="' . $this->linkSelf('&pathPrefixSearch=' . rawurlencode($inf['pagepath'])) . '">' .
-                                 $this->getIcon('gfx/napshot.gif', 'width="12" height="12"', $this->pObj->doc->backPath, 'Use for search') .
-                                '</a>' .
-                                '<a href="' . $this->linkSelf('&cmd=copy&entry=' . $inf['cache_id']) . '">' .
-                                $this->getIcon('gfx/clip_copy.gif', 'width="12" height="12"', $this->pObj->doc->backPath, 'Copy entry') .
-                                '</a>' .
-                                '</td>';
+                        $tCells[] = '<td>' .
+                            '<a href="' . $this->linkSelf('&cmd=delete&entry=' . $inf['cache_id']) . '">' .
+                            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete') .
+                            '</a>' .
+                            '<a href="' . $this->linkSelf('&cmd=edit&entry=' . $inf['cache_id']) . '">' .
+                            $this->getIcon('gfx/edit2.gif', 'width="12" height="12"', $this->pObj->doc->backPath, 'Edit') .
+                            '</a>' .
+                            '<a href="' . $this->linkSelf('&pathPrefixSearch=' . rawurlencode($inf['pagepath'])) . '">' .
+                            $this->getIcon('gfx/napshot.gif', 'width="12" height="12"', $this->pObj->doc->backPath, 'Use for search') .
+                            '</a>' .
+                            '<a href="' . $this->linkSelf('&cmd=copy&entry=' . $inf['cache_id']) . '">' .
+                            $this->getIcon('gfx/clip_copy.gif', 'width="12" height="12"', $this->pObj->doc->backPath, 'Copy entry') .
+                            '</a>' .
+                            '</td>';
                     }
-                    $tCells[]='<td' . ($inf['expire'] && $inf['expire']<time() ? ' style="color: red;"':'') . '>' .
-                                ($inf['expire'] ? htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::dateTimeAge($inf['expire'], -1)) : '') .
-                                ($inf['expire'] ?
-                                    '<a href="' . $this->linkSelf('&cmd=raiseExpire&entry=' . $inf['cache_id']) . '">' .
-                                    $this->getIcon('gfx/up.gif', 'width="14" height="14"', $this->pObj->doc->backPath, 'Set expire time to 30 days') .
-                                    '</a>' : '') .
-                                '</td>';
+                    $tCells[] = '<td' . ($inf['expire'] && $inf['expire'] < time() ? ' style="color: red;"' : '') . '>' .
+                        ($inf['expire'] ? htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::dateTimeAge($inf['expire'], -1)) : '') .
+                        ($inf['expire'] ?
+                            '<a href="' . $this->linkSelf('&cmd=raiseExpire&entry=' . $inf['cache_id']) . '">' .
+                            $this->getIcon('gfx/up.gif', 'width="14" height="14"', $this->pObj->doc->backPath, 'Set expire time to 30 days') .
+                            '</a>' : '') .
+                        '</td>';
 
-                        // Set error msg:
+                    // Set error msg:
                     $error = '';
                     if (!strcmp($inf['pagepath'], '')) {
-                        if ($row['row']['uid']!=$this->pObj->id) {    // Show error of "Empty" only for levels under the root. Yes, we cannot know that the pObj->id is the true root of the site, but at least any SUB page should probably have a path string!
+                        if ($row['row']['uid'] != $this->pObj->id) {    // Show error of "Empty" only for levels under the root. Yes, we cannot know that the pObj->id is the true root of the site, but at least any SUB page should probably have a path string!
                             $error = $this->pObj->doc->icons(2) . 'Empty';
                         }
                     } elseif (isset($trackSameUrl[$hash])) {
@@ -415,19 +424,19 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                     } else {
                         $error = '&nbsp;';
                     }
-                    $tCells[]='<td>' . $error . '</td>';
+                    $tCells[] = '<td>' . $error . '</td>';
 
-                    $tCells[]='<td>' . htmlspecialchars($inf['language_id']) . '</td>';
-                    $tCells[]='<td>' . htmlspecialchars($inf['mpvar']) . '</td>';
-                    $tCells[]='<td>' . htmlspecialchars($inf['rootpage_id']) . '</td>';
+                    $tCells[] = '<td>' . htmlspecialchars($inf['language_id']) . '</td>';
+                    $tCells[] = '<td>' . htmlspecialchars($inf['mpvar']) . '</td>';
+                    $tCells[] = '<td>' . htmlspecialchars($inf['rootpage_id']) . '</td>';
 
                     #$tCells[]='<td nowrap="nowrap">'.htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::datetime($inf['expire'])).' / '.htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::calcAge($inf['expire']-time())).'</td>';
 
                     $trackSameUrl[$hash] = $inf['page_id'];
 
-                        // Compile Row:
-                    $rowClass = 'bgColor' . ($cc%2 ? '-20':'-10');
-                    $output.= '
+                    // Compile Row:
+                    $rowClass = 'bgColor' . ($cc % 2 ? '-20' : '-10');
+                    $output .= '
 						<tr class="' . $rowClass . '">
 							' . implode('
 							', $tCells) . '
@@ -437,30 +446,30 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             }
         }
 
-            // Create header:
-        $tCells = array();
-        $tCells[]='<td>Title:</td>';
-        $tCells[]='<td>ID:</td>';
-        $tCells[]='<td>&nbsp;</td>';
-        $tCells[]='<td>PathSegment | Alias | NavTitle | Title:</td>';
-        $tCells[]='<td>Pagepath:</td>';
-        $tCells[]='<td>' .
-                    '<a href="' . $this->linkSelf('&cmd=delete&entry=ALL') . '" onclick="return confirm(\'Are you sure you want to flush all cached page paths?\');">' .
-                    $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
-                    '</a>' .
-                    '<a href="' . $this->linkSelf('&cmd=edit&entry=ALL') . '">' .
-                    $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
-                    '</a>' .
-                    '</td>';
-        $tCells[]='<td>Expires:' .
-                        '<a href="' . $this->linkSelf('&cmd=flushExpired') . '">' .
-                        $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Flush all expired') .
-                        '</a>' .
-                    '</td>';
-        $tCells[]='<td>Errors:</td>';
-        $tCells[]='<td>Lang:</td>';
-        $tCells[]='<td>&MP:</td>';
-        $tCells[]='<td>RootPage ID:</td>';
+        // Create header:
+        $tCells = [];
+        $tCells[] = '<td>Title:</td>';
+        $tCells[] = '<td>ID:</td>';
+        $tCells[] = '<td>&nbsp;</td>';
+        $tCells[] = '<td>PathSegment | Alias | NavTitle | Title:</td>';
+        $tCells[] = '<td>Pagepath:</td>';
+        $tCells[] = '<td>' .
+            '<a href="' . $this->linkSelf('&cmd=delete&entry=ALL') . '" onclick="return confirm(\'Are you sure you want to flush all cached page paths?\');">' .
+            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
+            '</a>' .
+            '<a href="' . $this->linkSelf('&cmd=edit&entry=ALL') . '">' .
+            $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
+            '</a>' .
+            '</td>';
+        $tCells[] = '<td>Expires:' .
+            '<a href="' . $this->linkSelf('&cmd=flushExpired') . '">' .
+            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Flush all expired') .
+            '</a>' .
+            '</td>';
+        $tCells[] = '<td>Errors:</td>';
+        $tCells[] = '<td>Lang:</td>';
+        $tCells[] = '<td>&MP:</td>';
+        $tCells[] = '<td>RootPage ID:</td>';
         #$tCells[]='<td>Expire:</td>';
         $output = '
 			<tr class="bgColor5 tableheader">
@@ -468,13 +477,13 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 				', $tCells) . '
 			</tr>' . $output;
 
-            // Compile final table and return:
+        // Compile final table and return:
         $output = '
-		<table border="0" cellspacing="1" cellpadding="0" id="tx-realurl-pathcacheTable" class="lrPadding c-list">' . $output . '
+		<table border="0" cellspacing="1" cellpadding="0" id="tx-hellurl-pathcacheTable" class="lrPadding c-list">' . $output . '
 		</table>';
 
-        if ($cmd==='edit' && $entry=='ALL') {
-            $output.= $this->saveCancelButtons();
+        if ($cmd === 'edit' && $entry == 'ALL') {
+            $output .= $this->saveCancelButtons();
         }
 
         return $output;
@@ -483,8 +492,9 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Fetch path caching information for page.
      *
-     * @param	int		Page ID
-     * @return	array		Path Cache records
+     * @param    int        Page ID
+     *
+     * @return    array        Path Cache records
      */
     public function getPathCache($pageId)
     {
@@ -493,28 +503,28 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $entry = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET('entry');
 
         $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
-                    '*',
-                    'tx_realurl_pathcache',
-                    'page_id=' . intval($pageId) .
-                        ((string)$showLanguage!=='' ? ' AND language_id=' . intval($showLanguage) : ''),
-                    '',
-                    'language_id,expire'
-                );
+            '*',
+            'tx_hellurl_pathcache',
+            'page_id=' . intval($pageId) .
+            ((string)$showLanguage !== '' ? ' AND language_id=' . intval($showLanguage) : ''),
+            '',
+            'language_id,expire'
+        );
 
-            // Traverse result:
-        $output = array();
+        // Traverse result:
+        $output = [];
         while (false != ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
 
-                // Delete entries:
-            if ($cmd==='delete' && (!strcmp($entry, $row['cache_id']) || !strcmp($entry, 'ALL'))) {
+            // Delete entries:
+            if ($cmd === 'delete' && (!strcmp($entry, $row['cache_id']) || !strcmp($entry, 'ALL'))) {
                 $this->deletePathCacheEntry($row['cache_id']);
                 // Raise expire times:
-            } elseif ($cmd==='raiseExpire' && !strcmp($entry, $row['cache_id'])) {
+            } elseif ($cmd === 'raiseExpire' && !strcmp($entry, $row['cache_id'])) {
                 $this->raiseExpirePathCacheEntry($row);
                 $output[] = $row;
-            } elseif ($cmd==='flushExpired' && $row['expire'] && $row['expire']<time()) {
+            } elseif ($cmd === 'flushExpired' && $row['expire'] && $row['expire'] < time()) {
                 $this->deletePathCacheEntry($row['cache_id']);
-            } elseif ($cmd==='copy' && (!strcmp($entry, $row['cache_id']))) {
+            } elseif ($cmd === 'copy' && (!strcmp($entry, $row['cache_id']))) {
                 $output[] = $this->copyPathCacheEntry($row);
                 $output[] = $row;
             } else {    // ... or add:
@@ -530,23 +540,24 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      * Links to the module script and sets necessary parameters (only for path cache display)
      *
      * @param string $parameters Additional GET vars
+     *
      * @return string script + query
      */
     public function linkSelf($parameters)
     {
         return htmlspecialchars(BackendUtility::getModuleUrl(
-            'web_info',
-            array(
-                'id' => $this->pObj->id,
-                'showLanguage' => \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('showLanguage'),
-            )
-        ) . $parameters);
+                'web_info',
+                [
+                    'id' => $this->pObj->id,
+                    'showLanguage' => \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('showLanguage'),
+                ]
+            ) . $parameters);
     }
 
     /**
      * Create search form
      *
-     * @return	string		HTML
+     * @return    string        HTML
      */
     public function renderSearchForm()
     {
@@ -555,8 +566,8 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $output .= '<div>' . $this->getSearchField() . '</div>';
         $output .= $this->getReplaceAndDeleteFields();
 
-        $output.= '<input type="hidden" name="id" value="' . $this->pObj->id . '" />';
-        $output.= '</fieldset>';
+        $output .= '<input type="hidden" name="id" value="' . $this->pObj->id . '" />';
+        $output .= '</fieldset>';
 
         return $output;
     }
@@ -580,15 +591,16 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 
     /**
      * Enter description here ...
+     *
      * @param output
      */
     protected function getSearchField()
     {
         $output = '<label for="pathPrefixSearch">' . $GLOBALS['LANG']->getLL('search_path', true) .
             '</label> <input type="text" name="pathPrefixSearch" id="pathPrefixSearch" value="' .
-                htmlspecialchars(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('pathPrefixSearch')) . '" />' .
+            htmlspecialchars(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('pathPrefixSearch')) . '" />' .
             '<input type="submit" name="_" value="' .
-                $GLOBALS['LANG']->getLL('look_up', true) . '" />';
+            $GLOBALS['LANG']->getLL('look_up', true) . '" />';
 
         return $output;
     }
@@ -602,7 +614,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     {
         $languages = $this->getSystemLanguages();
 
-        $options = array();
+        $options = [];
         $showLanguage = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('showLanguage');
         foreach ($languages as $language) {
             $selected = $showLanguage === $language['uid'] ? ' selected="selected"' : '';
@@ -625,8 +637,8 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 
         $defaultLanguageLabel = $this->getDefaultLanguageName();
 
-        array_unshift($languages, array('uid' => 0, 'title' => $defaultLanguageLabel));
-        array_unshift($languages, array('uid' => '', 'title' => $GLOBALS['LANG']->getLL('all_languages')));
+        array_unshift($languages, ['uid' => 0, 'title' => $defaultLanguageLabel]);
+        array_unshift($languages, ['uid' => '', 'title' => $GLOBALS['LANG']->getLL('all_languages')]);
 
         return $languages;
     }
@@ -650,48 +662,51 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Deletes an entry in pathcache table
      *
-     * @param	int		Path Cache id (cache_id)
-     * @return	void
+     * @param    int        Path Cache id (cache_id)
+     *
+     * @return    void
      */
     public function deletePathCacheEntry($cache_id)
     {
-        $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_realurl_pathcache', 'cache_id=' . intval($cache_id));
+        $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_hellurl_pathcache', 'cache_id=' . intval($cache_id));
     }
 
     /**
      * Deletes an entry in pathcache table
      *
-     * @param	int		Path Cache id (cache_id)
-     * @return	void
+     * @param    int        Path Cache id (cache_id)
+     *
+     * @return    void
      */
     public function raiseExpirePathCacheEntry(&$row)
     {
-        $row['expire'] = time()+30*24*3600;
-        $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_realurl_pathcache', 'expire>0 AND cache_id=' . intval($row['cache_id']), array('expire' => $row['expire']));
+        $row['expire'] = time() + 30 * 24 * 3600;
+        $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_pathcache', 'expire>0 AND cache_id=' . intval($row['cache_id']), ['expire' => $row['expire']]);
     }
 
     /**
      * Copies an entry in pathcache table
      *
-     * @param	array		Record to copy, passed by reference, will be updated.
-     * @return	array		New record.
+     * @param    array        Record to copy, passed by reference, will be updated.
+     *
+     * @return    array        New record.
      */
     public function copyPathCacheEntry(&$oEntry)
     {
 
-            // Select old record:
+        // Select old record:
         $cEntry = $oEntry;
         unset($cEntry['cache_id']);
-        $GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_realurl_pathcache', $cEntry);
+        $GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_hellurl_pathcache', $cEntry);
         $cEntry['cache_id'] = $GLOBALS['TYPO3_DB']->sql_insert_id();
 
-            // Update the old record with expire time:
+        // Update the old record with expire time:
         if (!$oEntry['expire']) {
-            $oEntry['expire'] = time()+30*24*3600;
-            $field_values = array(
+            $oEntry['expire'] = time() + 30 * 24 * 3600;
+            $field_values = [
                 'expire' => $oEntry['expire'],
-            );
-            $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_realurl_pathcache', 'cache_id=' . intval($oEntry['cache_id']), $field_values);
+            ];
+            $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_pathcache', 'cache_id=' . intval($oEntry['cache_id']), $field_values);
         }
 
         return $cEntry;
@@ -700,19 +715,20 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Changes the "pagepath" value of an entry in the pathcache table
      *
-     * @param	int		Path Cache id (cache_id)
-     * @param	string		New value for the pagepath
-     * @return	void
+     * @param    int        Path Cache id (cache_id)
+     * @param    string        New value for the pagepath
+     *
+     * @return    void
      */
     public function editPathCacheEntry($cache_id, $value)
     {
-        $field_values = array(
-            'pagepath' => $value
-        );
-        $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_realurl_pathcache', 'cache_id=' . intval($cache_id), $field_values);
+        $field_values = [
+            'pagepath' => $value,
+        ];
+        $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_pathcache', 'cache_id=' . intval($cache_id), $field_values);
 
-            // Look up the page id so we can clear the encodeCache entries:
-        list($page_id_rec) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('page_id', 'tx_realurl_pathcache', 'cache_id=' . intval($cache_id));
+        // Look up the page id so we can clear the encodeCache entries:
+        list($page_id_rec) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('page_id', 'tx_hellurl_pathcache', 'cache_id=' . intval($cache_id));
         $this->clearDEncodeCache('page_' . $page_id_rec['page_id']); // Encode cache
         $this->clearDEncodeCache('page_' . $page_id_rec['page_id'], true);    // Decode cache
     }
@@ -720,7 +736,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Will look for submitted pagepath cache entries to save
      *
-     * @return	void
+     * @return    void
      */
     public function edit_save()
     {
@@ -735,10 +751,11 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Save / Cancel buttons
      *
-     * @param	string		Extra code.
-     * @return	string		Form elements
+     * @param    string        Extra code.
+     *
+     * @return    string        Form elements
      */
-    public function saveCancelButtons($extra='')
+    public function saveCancelButtons($extra = '')
     {
         $output = '<input type="submit" name="_edit_save" value="Save" /> ';
         $output .= '<input type="submit" name="_edit_cancel" value="Cancel" />';
@@ -756,13 +773,14 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Rendering the decode-cache content
      *
-     * @param	array		The Page tree data
-     * @return	string		HTML for the information table.
+     * @param    array        The Page tree data
+     *
+     * @return    string        HTML for the information table.
      */
     public function decodeView(\TYPO3\CMS\Backend\Tree\View\PageTreeView $tree)
     {
 
-            // Delete entries:
+        // Delete entries:
         $cmd = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('cmd');
         $subcmd = '';
         if ($cmd === 'deleteDC') {
@@ -770,37 +788,37 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             $this->clearDEncodeCache($subcmd, true);
         }
 
-            // Traverse tree:
+        // Traverse tree:
         $output = '';
-        $cc=0;
+        $cc = 0;
         $countDisplayed = 0;
         foreach ($tree->tree as $row) {
 
-                // Select rows:
-            $displayRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tx_realurl_urldecodecache', 'page_id=' . intval($row['row']['uid']), '', 'spurl');
+            // Select rows:
+            $displayRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tx_hellurl_urldecodecache', 'page_id=' . intval($row['row']['uid']), '', 'spurl');
 
-                // Row title:
+            // Row title:
             $rowTitle = $row['HTML'] . \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordTitle('pages', $row['row'], true);
 
-                // Add at least one empty element:
-            if (!count($displayRows) || $subcmd==='displayed') {
+            // Add at least one empty element:
+            if (!count($displayRows) || $subcmd === 'displayed') {
 
-                    // Add title:
-                $tCells = array();
-                $tCells[]='<td nowrap="nowrap">' . $rowTitle . '</td>';
+                // Add title:
+                $tCells = [];
+                $tCells[] = '<td nowrap="nowrap">' . $rowTitle . '</td>';
 
-                    // Empty row:
-                $tCells[]='<td colspan="6" align="center">&nbsp;</td>';
+                // Empty row:
+                $tCells[] = '<td colspan="6" align="center">&nbsp;</td>';
 
-                    // Compile Row:
-                $output.= '
-					<tr class="bgColor' . ($cc%2 ? '-20':'-10') . '">
+                // Compile Row:
+                $output .= '
+					<tr class="bgColor' . ($cc % 2 ? '-20' : '-10') . '">
 						' . implode('
 						', $tCells) . '
 					</tr>';
                 $cc++;
 
-                if ($subcmd==='displayed') {
+                if ($subcmd === 'displayed') {
                     foreach ($displayRows as $c => $inf) {
                         $this->clearDEncodeCache('urlhash_' . $inf['url_hash'], true);
                     }
@@ -808,40 +826,40 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             } else {
                 foreach ($displayRows as $c => $inf) {
 
-                        // Add icon/title and ID:
-                    $tCells = array();
+                    // Add icon/title and ID:
+                    $tCells = [];
                     if (!$c) {
-                        $tCells[]='<td nowrap="nowrap" rowspan="' . count($displayRows) . '">' . $rowTitle . '</td>';
-                        $tCells[]='<td nowrap="nowrap" rowspan="' . count($displayRows) . '">' . $row['row']['uid'] . '</td>';
-                        $tCells[]='<td rowspan="' . count($displayRows) . '">' .
+                        $tCells[] = '<td nowrap="nowrap" rowspan="' . count($displayRows) . '">' . $rowTitle . '</td>';
+                        $tCells[] = '<td nowrap="nowrap" rowspan="' . count($displayRows) . '">' . $row['row']['uid'] . '</td>';
+                        $tCells[] = '<td rowspan="' . count($displayRows) . '">' .
                             '<a href="' . $this->linkSelf('&cmd=deleteDC&entry=page_' . intval($row['row']['uid'])) . '">' .
                             $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete entries for page') .
                             '</a>' .
-                        '</td>';
+                            '</td>';
                     }
 
-                        // Path:
-                    $tCells[]='<td>' . htmlspecialchars($inf['spurl']) . '</td>';
+                    // Path:
+                    $tCells[] = '<td>' . htmlspecialchars($inf['spurl']) . '</td>';
 
-                        // Get vars:
+                    // Get vars:
                     $queryValues = unserialize($inf['content']);
                     $queryParams = '?id=' . $queryValues['id'] .
-                                    (is_array($queryValues['GET_VARS']) ? \TYPO3\CMS\Core\Utility\GeneralUtility::implodeArrayForUrl('', $queryValues['GET_VARS']) : '');
-                    $tCells[]='<td>' . htmlspecialchars($queryParams) . '</td>';
+                        (is_array($queryValues['GET_VARS']) ? \TYPO3\CMS\Core\Utility\GeneralUtility::implodeArrayForUrl('', $queryValues['GET_VARS']) : '');
+                    $tCells[] = '<td>' . htmlspecialchars($queryParams) . '</td>';
 
-                        // Delete:
-                    $tCells[]='<td>' .
-                            '<a href="' . $this->linkSelf('&cmd=deleteDC&entry=urlhash_' . rawurlencode($inf['url_hash'])) . '">' .
-                            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete entry') .
-                            '</a>' .
+                    // Delete:
+                    $tCells[] = '<td>' .
+                        '<a href="' . $this->linkSelf('&cmd=deleteDC&entry=urlhash_' . rawurlencode($inf['url_hash'])) . '">' .
+                        $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete entry') .
+                        '</a>' .
                         '</td>';
 
-                        // Timestamp:
-                    $tCells[]='<td>' . htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::datetime($inf['tstamp'])) . ' / ' . htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::calcAge(time()-$inf['tstamp'])) . '</td>';
+                    // Timestamp:
+                    $tCells[] = '<td>' . htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::datetime($inf['tstamp'])) . ' / ' . htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::calcAge(time() - $inf['tstamp'])) . '</td>';
 
-                        // Compile Row:
-                    $output.= '
-						<tr class="bgColor' . ($cc%2 ? '-20':'-10') . '">
+                    // Compile Row:
+                    $output .= '
+						<tr class="bgColor' . ($cc % 2 ? '-20' : '-10') . '">
 							' . implode('
 							', $tCells) . '
 						</tr>';
@@ -851,17 +869,17 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             }
         }
 
-        list($count_allInTable) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('count(*) AS count', 'tx_realurl_urldecodecache', '');
+        list($count_allInTable) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('count(*) AS count', 'tx_hellurl_urldecodecache', '');
 
-            // Create header:
-        $tCells = array();
-        $tCells[]='<td>Title:</td>';
-        $tCells[]='<td>ID:</td>';
-        $tCells[]='<td>&nbsp;</td>';
-        $tCells[]='<td>Path:</td>';
-        $tCells[]='<td>GET variables:</td>';
-        $tCells[]='<td>&nbsp;</td>';
-        $tCells[]='<td>Timestamp:</td>';
+        // Create header:
+        $tCells = [];
+        $tCells[] = '<td>Title:</td>';
+        $tCells[] = '<td>ID:</td>';
+        $tCells[] = '<td>&nbsp;</td>';
+        $tCells[] = '<td>Path:</td>';
+        $tCells[] = '<td>GET variables:</td>';
+        $tCells[] = '<td>&nbsp;</td>';
+        $tCells[] = '<td>Timestamp:</td>';
 
         $output = '
 			<tr class="bgColor5 tableheader">
@@ -869,19 +887,19 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 				', $tCells) . '
 			</tr>' . $output;
 
-            // Compile final table and return:
+        // Compile final table and return:
         $output = '<br/><br/>
 		Displayed entries: <b>' . $countDisplayed . '</b> ' .
             '<a href="' . $this->linkSelf('&cmd=deleteDC&entry=displayed') . '">' .
             $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete displayed entries') .
             '</a>' .
-        '<br/>
+            '<br/>
 		Total entries in decode cache: <b>' . $count_allInTable['count'] . '</b> ' .
             '<a href="' . $this->linkSelf('&cmd=deleteDC&entry=all') . '">' .
             $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete WHOLE decode cache!') .
             '</a>' .
-        '<br/>
-		<table border="0" cellspacing="1" cellpadding="0" id="tx-realurl-pathcacheTable" class="lrPadding c-list">' . $output . '
+            '<br/>
+		<table border="0" cellspacing="1" cellpadding="0" id="tx-hellurl-pathcacheTable" class="lrPadding c-list">' . $output . '
 		</table>';
 
         return $output;
@@ -896,13 +914,14 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Rendering the encode-cache content
      *
-     * @param	array		The Page tree data
-     * @return	string		HTML for the information table.
+     * @param    array        The Page tree data
+     *
+     * @return    string        HTML for the information table.
      */
     public function encodeView(\TYPO3\CMS\Backend\Tree\View\PageTreeView $tree)
     {
 
-            // Delete entries:
+        // Delete entries:
         $cmd = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('cmd');
         $subcmd = '';
         if ($cmd === 'deleteEC') {
@@ -910,40 +929,40 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             $this->clearDEncodeCache($subcmd);
         }
 
-            // Traverse tree:
+        // Traverse tree:
         $cc = 0;
         $countDisplayed = 0;
         $output = '';
-        $duplicates = array();
+        $duplicates = [];
 
         foreach ($tree->tree as $row) {
 
-                // Select rows:
-            $displayRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tx_realurl_urlencodecache', 'page_id=' . intval($row['row']['uid']), '', 'content');
+            // Select rows:
+            $displayRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tx_hellurl_urlencodecache', 'page_id=' . intval($row['row']['uid']), '', 'content');
 
-                // Row title:
+            // Row title:
             $rowTitle = $row['HTML'] . \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordTitle('pages', $row['row'], true);
 
-                // Add at least one empty element:
-            if (!count($displayRows) || $subcmd==='displayed') {
+            // Add at least one empty element:
+            if (!count($displayRows) || $subcmd === 'displayed') {
 
-                    // Add title:
-                $tCells = array();
-                $tCells[]='<td nowrap="nowrap">' . $rowTitle . '</td>';
-                $tCells[]='<td nowrap="nowrap">&nbsp;</td>';
+                // Add title:
+                $tCells = [];
+                $tCells[] = '<td nowrap="nowrap">' . $rowTitle . '</td>';
+                $tCells[] = '<td nowrap="nowrap">&nbsp;</td>';
 
-                    // Empty row:
-                $tCells[]='<td colspan="7" align="center">&nbsp;</td>';
+                // Empty row:
+                $tCells[] = '<td colspan="7" align="center">&nbsp;</td>';
 
-                    // Compile Row:
-                $output.= '
-					<tr class="bgColor' . ($cc%2 ? '-20':'-10') . '">
+                // Compile Row:
+                $output .= '
+					<tr class="bgColor' . ($cc % 2 ? '-20' : '-10') . '">
 						' . implode('
 						', $tCells) . '
 					</tr>';
                 $cc++;
 
-                if ($subcmd==='displayed') {
+                if ($subcmd === 'displayed') {
                     foreach ($displayRows as $c => $inf) {
                         $this->clearDEncodeCache('urlhash_' . $inf['url_hash']);
                     }
@@ -951,46 +970,46 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             } else {
                 foreach ($displayRows as $c => $inf) {
                     // Add icon/title and ID:
-                    $tCells = array();
+                    $tCells = [];
                     if (!$c) {
-                        $tCells[]='<td nowrap="nowrap" rowspan="' . count($displayRows) . '">' . $rowTitle . '</td>';
-                        $tCells[]='<td nowrap="nowrap" rowspan="' . count($displayRows) . '">' . $row['row']['uid'] . '</td>';
-                        $tCells[]='<td rowspan="' . count($displayRows) . '">' .
+                        $tCells[] = '<td nowrap="nowrap" rowspan="' . count($displayRows) . '">' . $rowTitle . '</td>';
+                        $tCells[] = '<td nowrap="nowrap" rowspan="' . count($displayRows) . '">' . $row['row']['uid'] . '</td>';
+                        $tCells[] = '<td rowspan="' . count($displayRows) . '">' .
                             '<a href="' . $this->linkSelf('&cmd=deleteEC&entry=page_' . intval($row['row']['uid'])) . '">' .
                             $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete entries for page') .
                             '</a>' .
-                        '</td>';
+                            '</td>';
                     }
 
-                        // Get vars:
-                    $tCells[]='<td>' . htmlspecialchars(\TYPO3\CMS\Core\Utility\GeneralUtility::fixed_lgd_cs($inf['origparams'], 100)) . '</td>';
+                    // Get vars:
+                    $tCells[] = '<td>' . htmlspecialchars(\TYPO3\CMS\Core\Utility\GeneralUtility::fixed_lgd_cs($inf['origparams'], 100)) . '</td>';
 
-                        // Internal Extras:
-                    $tCells[]='<td>' . ($inf['internalExtras'] ? \TYPO3\CMS\Core\Utility\GeneralUtility::arrayToLogString(unserialize($inf['internalExtras'])) : '&nbsp;') . '</td>';
+                    // Internal Extras:
+                    $tCells[] = '<td>' . ($inf['internalExtras'] ? \TYPO3\CMS\Core\Utility\GeneralUtility::arrayToLogString(unserialize($inf['internalExtras'])) : '&nbsp;') . '</td>';
 
-                        // Path:
-                    $tCells[]='<td>' . htmlspecialchars(\TYPO3\CMS\Core\Utility\GeneralUtility::fixed_lgd_cs($inf['content'], 100)) . '</td>';
+                    // Path:
+                    $tCells[] = '<td>' . htmlspecialchars(\TYPO3\CMS\Core\Utility\GeneralUtility::fixed_lgd_cs($inf['content'], 100)) . '</td>';
 
-                        // Delete:
-                    $tCells[]='<td>' .
-                            '<a href="' . $this->linkSelf('&cmd=deleteEC&entry=urlhash_' . rawurlencode($inf['url_hash'])) . '">' .
-                            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete entry!') .
-                            '</a>' .
+                    // Delete:
+                    $tCells[] = '<td>' .
+                        '<a href="' . $this->linkSelf('&cmd=deleteEC&entry=urlhash_' . rawurlencode($inf['url_hash'])) . '">' .
+                        $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete entry!') .
+                        '</a>' .
                         '</td>';
 
-                        // Error:
+                    // Error:
                     $eMsg = ($duplicates[$inf['content']] && $duplicates[$inf['content']] !== $row['row']['uid'] ? $this->pObj->doc->icons(2) . 'Already used on page ID ' . $duplicates[$inf['content']] . '<br/>' : '');
-                    if (count($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('url_hash', 'tx_realurl_redirects', 'url_hash=' . intval(\TYPO3\CMS\Core\Utility\GeneralUtility::md5int($inf['content']))))) {
-                        $eMsg.= $this->pObj->doc->icons(3) . 'Also a redirect!';
+                    if (count($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('url_hash', 'tx_hellurl_redirects', 'url_hash=' . intval(\TYPO3\CMS\Core\Utility\GeneralUtility::md5int($inf['content']))))) {
+                        $eMsg .= $this->pObj->doc->icons(3) . 'Also a redirect!';
                     }
-                    $tCells[]='<td>' . $eMsg . '</td>';
+                    $tCells[] = '<td>' . $eMsg . '</td>';
 
-                        // Timestamp:
-                    $tCells[]='<td>' . htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::datetime($inf['tstamp'])) . ' / ' . htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::calcAge(time()-$inf['tstamp'])) . '</td>';
+                    // Timestamp:
+                    $tCells[] = '<td>' . htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::datetime($inf['tstamp'])) . ' / ' . htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::calcAge(time() - $inf['tstamp'])) . '</td>';
 
-                        // Compile Row:
-                    $output.= '
-						<tr class="bgColor' . ($cc%2 ? '-20':'-10') . '">
+                    // Compile Row:
+                    $output .= '
+						<tr class="bgColor' . ($cc % 2 ? '-20' : '-10') . '">
 							' . implode('
 							', $tCells) . '
 						</tr>';
@@ -1005,19 +1024,19 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             }
         }
 
-        list($count_allInTable) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('count(*) AS count', 'tx_realurl_urlencodecache', '');
+        list($count_allInTable) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('count(*) AS count', 'tx_hellurl_urlencodecache', '');
 
-            // Create header:
-        $tCells = array();
-        $tCells[]='<td>Title:</td>';
-        $tCells[]='<td>ID:</td>';
-        $tCells[]='<td>&nbsp;</td>';
-        $tCells[]='<td>Host | GET variables:</td>';
-        $tCells[]='<td>Internal Extras:</td>';
-        $tCells[]='<td>Path:</td>';
-        $tCells[]='<td>&nbsp;</td>';
-        $tCells[]='<td>Errors:</td>';
-        $tCells[]='<td>Timestamp:</td>';
+        // Create header:
+        $tCells = [];
+        $tCells[] = '<td>Title:</td>';
+        $tCells[] = '<td>ID:</td>';
+        $tCells[] = '<td>&nbsp;</td>';
+        $tCells[] = '<td>Host | GET variables:</td>';
+        $tCells[] = '<td>Internal Extras:</td>';
+        $tCells[] = '<td>Path:</td>';
+        $tCells[] = '<td>&nbsp;</td>';
+        $tCells[] = '<td>Errors:</td>';
+        $tCells[] = '<td>Timestamp:</td>';
 
         $output = '
 			<tr class="bgColor5 tableheader">
@@ -1025,7 +1044,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 				', $tCells) . '
 			</tr>' . $output;
 
-            // Compile final table and return:
+        // Compile final table and return:
         $output = '
 
 		<br/>
@@ -1034,13 +1053,13 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             '<a href="' . $this->linkSelf('&cmd=deleteEC&entry=displayed') . '">' .
             $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete displayed entries') .
             '</a>' .
-        '<br/>
+            '<br/>
 		Total entries in encode cache: <b>' . $count_allInTable['count'] . '</b> ' .
             '<a href="' . $this->linkSelf('&cmd=deleteEC&entry=all') . '">' .
             $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete WHOLE encode cache!') .
             '</a>' .
-        '<br/>
-		<table border="0" cellspacing="1" cellpadding="0" id="tx-realurl-pathcacheTable" class="lrPadding c-list">' . $output . '
+            '<br/>
+		<table border="0" cellspacing="1" cellpadding="0" id="tx-hellurl-pathcacheTable" class="lrPadding c-list">' . $output . '
 		</table>';
 
         return $output;
@@ -1049,24 +1068,24 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      *
      */
-    public function clearDEncodeCache($cmd, $decodeCache=false)
+    public function clearDEncodeCache($cmd, $decodeCache = false)
     {
-        $table = $decodeCache ? 'tx_realurl_urldecodecache' : 'tx_realurl_urlencodecache';
+        $table = $decodeCache ? 'tx_hellurl_urldecodecache' : 'tx_hellurl_urlencodecache';
 
         list($keyword, $id) = explode('_', $cmd);
 
         switch ((string)$keyword) {
             case 'all':
                 $GLOBALS['TYPO3_DB']->exec_DELETEquery($table, '');
-            break;
+                break;
             case 'page':
                 $GLOBALS['TYPO3_DB']->exec_DELETEquery($table, 'page_id=' . intval($id));
-            break;
+                break;
             case 'urlhash':
                 $GLOBALS['TYPO3_DB']->exec_DELETEquery($table, 'url_hash=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($id, $table));
-            break;
+                break;
             default:
-            break;
+                break;
         }
     }
 
@@ -1079,7 +1098,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Shows the mapping between aliases and unique IDs of arbitrary tables
      *
-     * @return	string		HTML
+     * @return    string        HTML
      */
     public function uniqueAlias()
     {
@@ -1088,75 +1107,75 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $entry = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET('entry');
         $search = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST('search');
 
-            // Select rows:
-        $overviewRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('tablename,count(*) as number_of_rows', 'tx_realurl_uniqalias', '', 'tablename', '', '', 'tablename');
+        // Select rows:
+        $overviewRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('tablename,count(*) as number_of_rows', 'tx_hellurl_uniqalias', '', 'tablename', '', '', 'tablename');
 
         if ($tableName && isset($overviewRows[$tableName])) {    // Show listing of single table:
 
-                // Some Commands:
-            if ($cmd==='delete') {
-                if ($entry==='ALL') {
-                    $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_realurl_uniqalias', 'tablename=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($tableName, 'tx_realurl_uniqalias'));
+            // Some Commands:
+            if ($cmd === 'delete') {
+                if ($entry === 'ALL') {
+                    $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_hellurl_uniqalias', 'tablename=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($tableName, 'tx_hellurl_uniqalias'));
                 } else {
-                    $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_realurl_uniqalias', 'tablename=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($tableName, 'tx_realurl_uniqalias') . ' AND uid=' . intval($entry));
+                    $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_hellurl_uniqalias', 'tablename=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($tableName, 'tx_hellurl_uniqalias') . ' AND uid=' . intval($entry));
                 }
             }
-            if ($cmd==='flushExpired') {
-                $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_realurl_uniqalias', 'tablename=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($tableName, 'tx_realurl_uniqalias') . ' AND expire>0 AND expire<' . intval(time()));
+            if ($cmd === 'flushExpired') {
+                $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_hellurl_uniqalias', 'tablename=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($tableName, 'tx_hellurl_uniqalias') . ' AND expire>0 AND expire<' . intval(time()));
             }
 
-                // Select rows:
+            // Select rows:
             $tableContent = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
                 '*',
-                'tx_realurl_uniqalias',
-                'tablename=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($tableName, 'tx_realurl_uniqalias') .
-                    ($search ? ' AND (value_id=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($search, $tableName) . ' OR value_alias LIKE \'%' . $GLOBALS['TYPO3_DB']->quoteStr($search, $tableName) . '%\')':''),
+                'tx_hellurl_uniqalias',
+                'tablename=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($tableName, 'tx_hellurl_uniqalias') .
+                ($search ? ' AND (value_id=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($search, $tableName) . ' OR value_alias LIKE \'%' . $GLOBALS['TYPO3_DB']->quoteStr($search, $tableName) . '%\')' : ''),
                 '',
                 'value_id, lang, expire'
             );
 
             $cc = 0;
             $field_id = $field_alias = $output = '';
-            $duplicates = array();
+            $duplicates = [];
             foreach ($tableContent as $aliasRecord) {
                 // Add data:
-                $tCells = array();
-                $tCells[]='<td>' . htmlspecialchars($aliasRecord['value_id']) . '</td>';
+                $tCells = [];
+                $tCells[] = '<td>' . htmlspecialchars($aliasRecord['value_id']) . '</td>';
 
-                if ((string)$cmd==='edit' && ($entry==='ALL' || !strcmp($entry, $aliasRecord['uid']))) {
-                    $tCells[]='<td>' .
-                                '<input type="text" name="edit[' . $aliasRecord['uid'] . ']" value="' . htmlspecialchars($aliasRecord['value_alias']) . '" />' .
-                                ($entry!=='ALL' ? $this->saveCancelButtons('') : '') .
-                                '</td>';
+                if ((string)$cmd === 'edit' && ($entry === 'ALL' || !strcmp($entry, $aliasRecord['uid']))) {
+                    $tCells[] = '<td>' .
+                        '<input type="text" name="edit[' . $aliasRecord['uid'] . ']" value="' . htmlspecialchars($aliasRecord['value_alias']) . '" />' .
+                        ($entry !== 'ALL' ? $this->saveCancelButtons('') : '') .
+                        '</td>';
                 } else {
-                    $tCells[]='<td' . ($aliasRecord['expire'] ? ' style="font-style: italic; color:#999999;"' : '') . '>' . htmlspecialchars($aliasRecord['value_alias']) . '</td>';
+                    $tCells[] = '<td' . ($aliasRecord['expire'] ? ' style="font-style: italic; color:#999999;"' : '') . '>' . htmlspecialchars($aliasRecord['value_alias']) . '</td>';
                 }
 
-                $tCells[]='<td>' . htmlspecialchars($aliasRecord['lang']) . '</td>';
-                $tCells[]='<td' . ($aliasRecord['expire'] && $aliasRecord['expire']<time() ? ' style="color: red;"':'') . '>' . htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::dateTimeAge($aliasRecord['expire'])) . '</td>';
+                $tCells[] = '<td>' . htmlspecialchars($aliasRecord['lang']) . '</td>';
+                $tCells[] = '<td' . ($aliasRecord['expire'] && $aliasRecord['expire'] < time() ? ' style="color: red;"' : '') . '>' . htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::dateTimeAge($aliasRecord['expire'])) . '</td>';
 
-                $tCells[]='<td>' .
-                                // Edit link:
-                            '<a href="' . $this->linkSelf('&table=' . rawurlencode($tableName) . '&cmd=edit&entry=' . $aliasRecord['uid']) . '">' .
-                            $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
-                            '</a>' .
-                                // Delete link:
-                            '<a href="' . $this->linkSelf('&table=' . rawurlencode($tableName) . '&cmd=delete&entry=' . $aliasRecord['uid']) . '">' .
-                            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
-                            '</a>' .
-                            '</td>';
+                $tCells[] = '<td>' .
+                    // Edit link:
+                    '<a href="' . $this->linkSelf('&table=' . rawurlencode($tableName) . '&cmd=edit&entry=' . $aliasRecord['uid']) . '">' .
+                    $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
+                    '</a>' .
+                    // Delete link:
+                    '<a href="' . $this->linkSelf('&table=' . rawurlencode($tableName) . '&cmd=delete&entry=' . $aliasRecord['uid']) . '">' .
+                    $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
+                    '</a>' .
+                    '</td>';
 
                 $keyForDuplicates = $aliasRecord['value_alias'] . ':::' . $aliasRecord['lang'];
-                $tCells[]='<td>' .
-                        (isset($duplicates[$keyForDuplicates]) ? $this->pObj->doc->icons(2) . 'Already used by ID ' . $duplicates[$aliasRecord['value_alias']] :'&nbsp;') .
-                        '</td>';
+                $tCells[] = '<td>' .
+                    (isset($duplicates[$keyForDuplicates]) ? $this->pObj->doc->icons(2) . 'Already used by ID ' . $duplicates[$aliasRecord['value_alias']] : '&nbsp;') .
+                    '</td>';
 
                 $field_id = $aliasRecord['field_id'];
                 $field_alias = $aliasRecord['field_alias'];
 
-                    // Compile Row:
+                // Compile Row:
                 $output .= '
-					<tr class="bgColor' . ($cc%2 ? '-20':'-10') . '">
+					<tr class="bgColor' . ($cc % 2 ? '-20' : '-10') . '">
 						' . implode('
 						', $tCells) . '
 					</tr>';
@@ -1165,32 +1184,32 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 $duplicates[$keyForDuplicates] = $aliasRecord['value_id'];
             }
 
-                // Create header:
-            $tCells = array();
-            $tCells[]='<td>ID (Field: ' . $field_id . ')</td>';
-            $tCells[]='<td>Alias (Field: ' . $field_alias . '):</td>';
-            $tCells[]='<td>Lang:</td>';
-            $tCells[]='<td>Expire:' .
-                        (!$search ? '<a href="' . $this->linkSelf('&table=' . rawurlencode($tableName) . '&cmd=flushExpired') . '">' .
-                        $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Flush expired') .
-                        '</a>' : '') .
-                        '</td>';
-            $tCells[]='<td>' .
-                        (!$search ? '<a href="' . $this->linkSelf('&table=' . rawurlencode($tableName) . '&cmd=edit&entry=ALL') . '">' .
-                        $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Edit all') .
-                        '</a>' .
-                        '<a href="' . $this->linkSelf('&table=' . rawurlencode($tableName) . '&cmd=delete&entry=ALL') . '" onclick="return confirm(\'Delete all?\');">' .
-                        $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete all') .
-                        '</a>' : '') .
-                        '</td>';
-            $tCells[]='<td>Error:</td>';
+            // Create header:
+            $tCells = [];
+            $tCells[] = '<td>ID (Field: ' . $field_id . ')</td>';
+            $tCells[] = '<td>Alias (Field: ' . $field_alias . '):</td>';
+            $tCells[] = '<td>Lang:</td>';
+            $tCells[] = '<td>Expire:' .
+                (!$search ? '<a href="' . $this->linkSelf('&table=' . rawurlencode($tableName) . '&cmd=flushExpired') . '">' .
+                    $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Flush expired') .
+                    '</a>' : '') .
+                '</td>';
+            $tCells[] = '<td>' .
+                (!$search ? '<a href="' . $this->linkSelf('&table=' . rawurlencode($tableName) . '&cmd=edit&entry=ALL') . '">' .
+                    $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Edit all') .
+                    '</a>' .
+                    '<a href="' . $this->linkSelf('&table=' . rawurlencode($tableName) . '&cmd=delete&entry=ALL') . '" onclick="return confirm(\'Delete all?\');">' .
+                    $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete all') .
+                    '</a>' : '') .
+                '</td>';
+            $tCells[] = '<td>Error:</td>';
 
             $output = '
 				<tr class="bgColor5 tableheader">
 					' . implode('
 					', $tCells) . '
 				</tr>' . $output;
-                    // Compile final table and return:
+            // Compile final table and return:
             $output = '
 
 			<br/>
@@ -1200,36 +1219,36 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 			<input type="hidden" name="table" value="' . htmlspecialchars($tableName) . '" />
 			<input type="hidden" name="id" value="' . htmlspecialchars($this->pObj->id) . '" />
 			<br/><br/>
-			<table border="0" cellspacing="1" cellpadding="0" id="tx-realurl-pathcacheTable" class="lrPadding c-list">' . $output . '
+			<table border="0" cellspacing="1" cellpadding="0" id="tx-hellurl-pathcacheTable" class="lrPadding c-list">' . $output . '
 			</table>';
 
-            if ($entry==='ALL') {
-                $output.= $this->saveCancelButtons('<input type="hidden" name="table" value="' . htmlspecialchars($tableName) . '" /><input type="hidden" name="id" value="' . htmlspecialchars($this->pObj->id) . '" />');
+            if ($entry === 'ALL') {
+                $output .= $this->saveCancelButtons('<input type="hidden" name="table" value="' . htmlspecialchars($tableName) . '" /><input type="hidden" name="id" value="' . htmlspecialchars($this->pObj->id) . '" />');
             }
         } else {    // Create overview:
-            $cc=0;
-            $output='';
+            $cc = 0;
+            $output = '';
             if (count($overviewRows)) {
                 foreach ($overviewRows as $aliasRecord) {
 
-                        // Add data:
-                    $tCells = array();
-                    $tCells[]='<td><a href="' . $this->linkSelf('&table=' . rawurlencode($aliasRecord['tablename'])) . '">' . $aliasRecord['tablename'] . '</a></td>';
-                    $tCells[]='<td>' . $aliasRecord['number_of_rows'] . '</td>';
+                    // Add data:
+                    $tCells = [];
+                    $tCells[] = '<td><a href="' . $this->linkSelf('&table=' . rawurlencode($aliasRecord['tablename'])) . '">' . $aliasRecord['tablename'] . '</a></td>';
+                    $tCells[] = '<td>' . $aliasRecord['number_of_rows'] . '</td>';
 
-                        // Compile Row:
-                    $output.= '
-						<tr class="bgColor' . ($cc%2 ? '-20':'-10') . '">
+                    // Compile Row:
+                    $output .= '
+						<tr class="bgColor' . ($cc % 2 ? '-20' : '-10') . '">
 							' . implode('
 							', $tCells) . '
 						</tr>';
                     $cc++;
                 }
 
-                    // Create header:
-                $tCells = array();
-                $tCells[]='<td>Table:</td>';
-                $tCells[]='<td>Aliases:</td>';
+                // Create header:
+                $tCells = [];
+                $tCells[] = '<td>Table:</td>';
+                $tCells[] = '<td>Aliases:</td>';
 
                 $output = '
 					<tr class="bgColor5 tableheader">
@@ -1237,9 +1256,9 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 						', $tCells) . '
 					</tr>' . $output;
 
-                    // Compile final table and return:
+                // Compile final table and return:
                 $output = '
-				<table border="0" cellspacing="1" cellpadding="0" id="tx-realurl-pathcacheTable" class="lrPadding c-list">' . $output . '
+				<table border="0" cellspacing="1" cellpadding="0" id="tx-hellurl-pathcacheTable" class="lrPadding c-list">' . $output . '
 				</table>';
             }
         }
@@ -1250,22 +1269,23 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Changes the "alias" value of an entry in the unique alias table
      *
-     * @param	int		UID of unique alias
-     * @param	string		New value for the alias
-     * @return	void
+     * @param    int        UID of unique alias
+     * @param    string        New value for the alias
+     *
+     * @return    void
      */
     public function editUniqAliasEntry($cache_id, $value)
     {
-        $field_values = array(
-            'value_alias' => $value
-        );
-        $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_realurl_uniqalias', 'uid=' . intval($cache_id), $field_values);
+        $field_values = [
+            'value_alias' => $value,
+        ];
+        $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_uniqalias', 'uid=' . intval($cache_id), $field_values);
     }
 
     /**
      * Will look for submitted unique alias entries to save
      *
-     * @return	void
+     * @return    void
      */
     public function edit_save_uniqAlias()
     {
@@ -1286,7 +1306,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Shows configuration of the extension.
      *
-     * @return	string		HTML
+     * @return    string        HTML
      */
     public function configView()
     {
@@ -1297,12 +1317,12 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $arrayBrowser->fixedLgd = false;
         $arrayBrowser->dontLinkVar = true;
 
-            // Create the display code:
-        $theVar = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl'];
+        // Create the display code:
+        $theVar = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl'];
         $tree = $arrayBrowser->tree($theVar, '', '');
 
         $tree = '<hr/>
-		<b>$GLOBALS[\'TYPO3_CONF_VARS\'][\'EXTCONF\'][\'realurl\']</b>
+		<b>$GLOBALS[\'TYPO3_CONF_VARS\'][\'EXTCONF\'][\'hellurl\']</b>
 		<br/>
 		<span class="nobr">' . $tree . '</span>';
 
@@ -1318,21 +1338,21 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * View error log
      *
-     * @return	string		HTML
+     * @return    string        HTML
      */
     public function logView()
     {
         $cmd = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('cmd');
-        if ($cmd==='deleteAll') {
+        if ($cmd === 'deleteAll') {
             $GLOBALS['TYPO3_DB']->exec_DELETEquery(
-                'tx_realurl_errorlog',
+                'tx_hellurl_errorlog',
                 ''
             );
         }
 
         $list = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
             '*',
-            'tx_realurl_errorlog',
+            'tx_hellurl_errorlog',
             '',
             '',
             'counter DESC, tstamp DESC',
@@ -1340,7 +1360,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         );
 
         if (is_array($list)) {
-            $output='';
+            $output = '';
             $cc = 0;
 
             foreach ($list as $rec) {
@@ -1353,37 +1373,37 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                     }
                 }
 
-                    // Add data:
-                $tCells = array();
-                $tCells[]='<td>' . $rec['counter'] . '</td>';
-                $tCells[]='<td>' . \TYPO3\CMS\Backend\Utility\BackendUtility::dateTimeAge($rec['tstamp']) . '</td>';
-                $tCells[]='<td><a href="' . htmlspecialchars($host . '/' . $rec['url']) . '" target="_blank">' . ($host ? $host . '/' : '') . htmlspecialchars($rec['url']) . '</a>' .
-                            ' <a href="' . $this->linkSelf('&cmd=new&data[0][source]=' . rawurlencode($rec['url']) . '&SET[type]=redirects') . '">' .
-                            $this->getIcon('gfx/napshot.gif', 'width="12" height="12"', $this->pObj->doc->backPath, 'Set as redirect') .
-                            '</a>' .
-                            '</td>';
-                $tCells[]='<td>' . htmlspecialchars($rec['error']) . '</td>';
-                $tCells[]='<td>' .
-                                ($rec['last_referer'] ? '<a href="' . htmlspecialchars($rec['last_referer']) . '" target="_blank">' . htmlspecialchars($rec['last_referer']) . '</a>' : '&nbsp;') .
-                                '</td>';
-                $tCells[]='<td>' . \TYPO3\CMS\Backend\Utility\BackendUtility::datetime($rec['cr_date']) . '</td>';
+                // Add data:
+                $tCells = [];
+                $tCells[] = '<td>' . $rec['counter'] . '</td>';
+                $tCells[] = '<td>' . \TYPO3\CMS\Backend\Utility\BackendUtility::dateTimeAge($rec['tstamp']) . '</td>';
+                $tCells[] = '<td><a href="' . htmlspecialchars($host . '/' . $rec['url']) . '" target="_blank">' . ($host ? $host . '/' : '') . htmlspecialchars($rec['url']) . '</a>' .
+                    ' <a href="' . $this->linkSelf('&cmd=new&data[0][source]=' . rawurlencode($rec['url']) . '&SET[type]=redirects') . '">' .
+                    $this->getIcon('gfx/napshot.gif', 'width="12" height="12"', $this->pObj->doc->backPath, 'Set as redirect') .
+                    '</a>' .
+                    '</td>';
+                $tCells[] = '<td>' . htmlspecialchars($rec['error']) . '</td>';
+                $tCells[] = '<td>' .
+                    ($rec['last_referer'] ? '<a href="' . htmlspecialchars($rec['last_referer']) . '" target="_blank">' . htmlspecialchars($rec['last_referer']) . '</a>' : '&nbsp;') .
+                    '</td>';
+                $tCells[] = '<td>' . \TYPO3\CMS\Backend\Utility\BackendUtility::datetime($rec['cr_date']) . '</td>';
 
-                    // Compile Row:
-                $output.= '
-					<tr class="bgColor' . ($cc%2 ? '-20':'-10') . '">
+                // Compile Row:
+                $output .= '
+					<tr class="bgColor' . ($cc % 2 ? '-20' : '-10') . '">
 						' . implode('
 						', $tCells) . '
 					</tr>';
                 $cc++;
             }
-                // Create header:
-            $tCells = array();
-            $tCells[]='<td>Counter:</td>';
-            $tCells[]='<td>Last time:</td>';
-            $tCells[]='<td>URL:</td>';
-            $tCells[]='<td>Error:</td>';
-            $tCells[]='<td>Last Referer:</td>';
-            $tCells[]='<td>First time:</td>';
+            // Create header:
+            $tCells = [];
+            $tCells[] = '<td>Counter:</td>';
+            $tCells[] = '<td>Last time:</td>';
+            $tCells[] = '<td>URL:</td>';
+            $tCells[] = '<td>Error:</td>';
+            $tCells[] = '<td>Last Referer:</td>';
+            $tCells[] = '<td>First time:</td>';
 
             $output = '
 				<tr class="bgColor5 tableheader">
@@ -1391,14 +1411,14 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 					', $tCells) . '
 				</tr>' . $output;
 
-                // Compile final table and return:
+            // Compile final table and return:
             $output = '
 			<br/>
 				<a href="' . $this->linkSelf('&cmd=deleteAll') . '">' .
                 $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete All') .
                 ' Flush log</a>
 				<br/>
-			<table border="0" cellspacing="1" cellpadding="0" id="tx-realurl-pathcacheTable" class="lrPadding c-list">' . $output . '
+			<table border="0" cellspacing="1" cellpadding="0" id="tx-hellurl-pathcacheTable" class="lrPadding c-list">' . $output . '
 			</table>';
 
             return $output;
@@ -1407,12 +1427,12 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 
     public function getHostName($rootpage_id)
     {
-        foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl'] as $host => $config) {
+        foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl'] as $host => $config) {
             if ($host != '_DEFAULT') {
                 $hostName = $host;
                 while ($config !== false && !is_array($config)) {
                     $host = $config;
-                    $config = (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl'][$host]) ? $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl'][$host] : false);
+                    $config = (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl'][$host]) ? $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl'][$host] : false);
                 }
                 if (is_array($config) && isset($config['pagePath']) && isset($config['pagePath']['rootpage_id']) && $config['pagePath']['rootpage_id'] == $rootpage_id) {
                     return 'http://' . $hostName;
@@ -1431,7 +1451,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Redirect view
      *
-     * @return	string		HTML
+     * @return    string        HTML
      */
     public function redirectView()
     {
@@ -1466,6 +1486,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      *
      * @param string $sortingParameter
      * @param string $sortingDirection
+     *
      * @return string
      */
     protected function getRedirectsTableContent($sortingParameter, $sortingDirection)
@@ -1479,22 +1500,22 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $seachPath = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('pathPrefixSearch');
         if ($seachPath) {
             $seachPathDecoded = $GLOBALS['TYPO3_DB']->quoteStr(
-                $GLOBALS['TYPO3_DB']->escapeStrForLike(rawurlencode($seachPath), 'tx_realurl_redirects'),
-                'tx_realurl_redirects');
+                $GLOBALS['TYPO3_DB']->escapeStrForLike(rawurlencode($seachPath), 'tx_hellurl_redirects'),
+                'tx_hellurl_redirects');
             $seachPath = $GLOBALS['TYPO3_DB']->quoteStr(
-                $GLOBALS['TYPO3_DB']->escapeStrForLike($seachPath, 'tx_realurl_redirects'),
-                'tx_realurl_redirects');
+                $GLOBALS['TYPO3_DB']->escapeStrForLike($seachPath, 'tx_hellurl_redirects'),
+                'tx_hellurl_redirects');
             $condition = 'url LIKE \'%' . $seachPathDecoded . '%\' OR ' .
                 'destination LIKE \'%' . $seachPath . '%\'';
         }
 
-        $start = ($page-1)*$resultsPerPage;
+        $start = ($page - 1) * $resultsPerPage;
         if ($sortingParameter !== 'domain_limit') {
-            $query = 'SELECT t1.* FROM tx_realurl_redirects t1' . ($condition ? ' WHERE ' . $condition : '') .
+            $query = 'SELECT t1.* FROM tx_hellurl_redirects t1' . ($condition ? ' WHERE ' . $condition : '') .
                 ' ORDER BY ' . $sortingParameter . ' ' . $sortingDirection .
                 ' LIMIT ' . $start . ',' . $resultsPerPage;
         } else {
-            $query = 'SELECT t1.* FROM tx_realurl_redirects t1' .
+            $query = 'SELECT t1.* FROM tx_hellurl_redirects t1' .
                 ' LEFT JOIN sys_domain t2 ON t1.domain_limit=t2.uid' .
                 ($condition ? ' WHERE ' . $condition : '') .
                 ' ORDER BY ' . $sortingParameter . ' ' . $sortingDirection .
@@ -1504,18 +1525,18 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $res = $GLOBALS['TYPO3_DB']->sql_query($query);
         $output = '';
         while (false !== ($rec = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
-            $output .= '<tr class="bgColor' . ($itemCounter%2 ? '-20':'-10') . '">' .
+            $output .= '<tr class="bgColor' . ($itemCounter % 2 ? '-20' : '-10') . '">' .
                 $this->generateSingleRedirectContent($rec, $page);
             $itemCounter++;
         }
         $GLOBALS['TYPO3_DB']->sql_free_result($res);
 
         list($count) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-            'COUNT(*) AS t', 'tx_realurl_redirects', $condition);
+            'COUNT(*) AS t', 'tx_hellurl_redirects', $condition);
         $totalResults = $count['t'];
         if ($totalResults > $resultsPerPage) {
-            $pageBrowser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Tx\\Realurl\\ViewHelpers\\PageBrowserViewHelper');
-            /** @var \Tx\Realurl\ViewHelpers\PageBrowserViewHelper $pageBrowser */
+            $pageBrowser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Nimut\\Hellurl\\ViewHelpers\\PageBrowserViewHelper');
+            /** @var \Nimut\Hellurl\ViewHelpers\PageBrowserViewHelper $pageBrowser */
             $results = sprintf($GLOBALS['LANG']->getLL('displaying_results'),
                 $start + 1, min($totalResults, ($start + $resultsPerPage)), $totalResults);
             $output .= '<tr><td colspan="4" style="vertical-align:middle">' . $results . '</td>' .
@@ -1531,13 +1552,14 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      * Obtains amount of results per page for the given view.
      *
      * @param string $view
+     *
      * @return int
      */
     protected function getResultsPerPage($view)
     {
-        $tsConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getModTSconfig($this->pObj->id, 'tx_realurl.' . $view . '.pagebrowser.resultsPerPage');
+        $tsConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getModTSconfig($this->pObj->id, 'tx_hellurl.' . $view . '.pagebrowser.resultsPerPage');
         $resultsPerPage = $tsConfig['value'];
-        return \TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($resultsPerPage) ? intval($resultsPerPage) : \Tx\Realurl\ViewHelpers\PageBrowserViewHelper::RESULTS_PER_PAGE_DEFAULT;
+        return \TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($resultsPerPage) ? intval($resultsPerPage) : \Nimut\Hellurl\ViewHelpers\PageBrowserViewHelper::RESULTS_PER_PAGE_DEFAULT;
     }
 
     /**
@@ -1545,18 +1567,19 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      *
      * @param array $rec
      * @param int $page
+     *
      * @return string
      */
     protected function generateSingleRedirectContent(array $rec, $page)
     {
         $output = '<td>' .
-                    '<a href="' . $this->linkSelf('&cmd=edit&uid=' . rawurlencode($rec['uid'])) . '&page=' . $page . '">' .
-                    $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Edit entry') .
-                    '</a>' .
-                    '<a href="' . $this->linkSelf('&cmd=delete&uid=' . rawurlencode($rec['uid'])) . '&page=' . $page . '">' .
-                    $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete entry') .
-                    '</a>' .
-                '</td>';
+            '<a href="' . $this->linkSelf('&cmd=edit&uid=' . rawurlencode($rec['uid'])) . '&page=' . $page . '">' .
+            $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Edit entry') .
+            '</a>' .
+            '<a href="' . $this->linkSelf('&cmd=delete&uid=' . rawurlencode($rec['uid'])) . '&page=' . $page . '">' .
+            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete entry') .
+            '</a>' .
+            '</td>';
         $output .= sprintf('<td><a href="%s" target="_blank">/%s</a></td>', htmlspecialchars(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . $rec['url']), htmlspecialchars($rec['url']));
         $destinationURL = $this->getDestinationRedirectURL($rec['destination']);
         $output .= sprintf('<td><a href="%1$s" target="_blank" title="%1$s">%2$s</a></td>', htmlspecialchars($destinationURL), htmlspecialchars(\TYPO3\CMS\Core\Utility\GeneralUtility::fixed_lgd_cs($destinationURL, 30)));
@@ -1579,11 +1602,11 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 
         // Error:
         $errorMessage = '';
-        $pagesWithURL = array_keys($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('page_id', 'tx_realurl_urlencodecache', 'content=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($rec['url'], 'tx_realurl_urlencodecache'), '', '', '', '', 'page_id'));
+        $pagesWithURL = array_keys($GLOBALS['TYPO3_DB']->exec_SELECTgetRows('page_id', 'tx_hellurl_urlencodecache', 'content=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($rec['url'], 'tx_hellurl_urlencodecache'), '', '', '', '', 'page_id'));
         if (count($pagesWithURL) > 0) {
-            $errorMessage.= $this->pObj->doc->icons(3) . 'Also a page URL: ' . implode(',', array_unique($pagesWithURL));
+            $errorMessage .= $this->pObj->doc->icons(3) . 'Also a page URL: ' . implode(',', array_unique($pagesWithURL));
         }
-        $output .='<td>' . $errorMessage . '</td>';
+        $output .= '<td>' . $errorMessage . '</td>';
 
         return $output;
     }
@@ -1592,6 +1615,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      * Obtains domain name by its id.
      *
      * @param int $domainId
+     *
      * @return string
      */
     protected function getRedirectDomain($domainId)
@@ -1616,7 +1640,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     protected function getRedirectViewHeader($sortingDirection)
     {
         $sortingDirection = ($sortingDirection == 'ASC' ? 'DESC' : 'ASC');
-        return '<table border="0" cellspacing="2" cellpadding="2" id="tx-realurl-pathcacheTable" class="lrPadding c-list">' .
+        return '<table border="0" cellspacing="2" cellpadding="2" id="tx-hellurl-pathcacheTable" class="lrPadding c-list">' .
             '<tr class="bgColor5 tableheader">' .
             '<td>&nbsp;</td>' .
             sprintf('<td><a href="%s">Source:</a></td>', sprintf('index.php?id=%d&SET[type]=%s&SET[ob]=url&SET[obdir]=%s', $this->pObj->id, $this->pObj->MOD_SETTINGS['type'], $sortingDirection)) .
@@ -1649,12 +1673,12 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                     $sortingDirection = '';
                 }
             }
-            $_SESSION['realurl']['redirects_view']['sorting'] = array($sortingParameter, $sortingDirection);
-        } elseif (!isset($_SESSION['realurl']['redirects_view']['sorting'])) {
-            $_SESSION['realurl']['redirects_view']['sorting'] = array('url','ASC');
+            $_SESSION['hellurl']['redirects_view']['sorting'] = [$sortingParameter, $sortingDirection];
+        } elseif (!isset($_SESSION['hellurl']['redirects_view']['sorting'])) {
+            $_SESSION['hellurl']['redirects_view']['sorting'] = ['url', 'ASC'];
         }
 
-        return $_SESSION['realurl']['redirects_view']['sorting'];
+        return $_SESSION['hellurl']['redirects_view']['sorting'];
     }
 
     /**
@@ -1671,7 +1695,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 break;
             case 'delete':
                 $this->deleteRedirectEntry();
-                // Fall through
+            // Fall through
             default:
                 $output = $this->getNewButton();
                 break;
@@ -1682,13 +1706,13 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Deletes a redirect entry.
      *
-     * @return	void
+     * @return    void
      */
     protected function deleteRedirectEntry()
     {
         $uid = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('uid');
         if ($uid) {
-            $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_realurl_redirects',
+            $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_hellurl_redirects',
                 'uid=' . intval($uid)
             );
         }
@@ -1711,7 +1735,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      * Checks form submission for 'new' and 'edit' actions and performs whatever
      * is necessary to add or edit data. Returns the form if necessary.
      *
-     * @return	string	HTML
+     * @return    string    HTML
      */
     protected function getProcessForm()
     {
@@ -1744,14 +1768,14 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Creates a form to edit an entry
      *
-     * @return	string	Generated HTML
+     * @return    string    Generated HTML
      */
     protected function getRedirectEditForm()
     {
         $content = '';
         $uid = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('uid');
         list($row) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-            'url,url_hash,destination,has_moved,domain_limit', 'tx_realurl_redirects',
+            'url,url_hash,destination,has_moved,domain_limit', 'tx_hellurl_redirects',
             'uid=' . intval($uid));
         if (is_array($row)) {
             $page = max(1, intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('page')));
@@ -1763,13 +1787,12 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 '<tr><td colspan="2">Domain:</td></td>' .
                 '<td><select name="data[0][domain_limit]">' . $this->getRedirectDomainOptions(intval($row['domain_limit'])) . '</select></td></tr>' .
                 '<tr><td colspan="2"></td>' .
-                '<td><input type="checkbox" name="data[0][permanent]" ' . ($row['has_moved'] ? ' checked="checked"':'') . ' /> Permanent redirect (send "301 Moved permanently" header)</td></tr>' .
+                '<td><input type="checkbox" name="data[0][permanent]" ' . ($row['has_moved'] ? ' checked="checked"' : '') . ' /> Permanent redirect (send "301 Moved permanently" header)</td></tr>' .
                 '<tr><td colspan="2"></td><td>' . $this->saveCancelButtons() . '</td></tr>' .
                 '</table>' .
                 '<input type="hidden" name="data[0][uid]" value="' . intval($uid) . '" />' .
                 '<input type="hidden" name="data[0][url_hash]" value="' . $row['url_hash'] . '" />' .
-                '<input type="hidden" name="page" value="' . intval($page) . '" />'
-                ;
+                '<input type="hidden" name="page" value="' . intval($page) . '" />';
         }
         return $content;
     }
@@ -1777,7 +1800,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Creates a form for the new entries
      *
-     * @return	string	Generated HTML
+     * @return    string    Generated HTML
      */
     protected function getRedirectNewForm()
     {
@@ -1790,7 +1813,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $data = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('data');
         $max = count($data);
         if (!is_array($data)) {
-            $data = array();
+            $data = [];
             $max = 10;
         }
         for ($i = 0; $i < $max; $i++) {
@@ -1814,6 +1837,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      * Creates a list of options for the domain selector box.
      *
      * @param int $selectedDomain
+     *
      * @return string
      */
     protected function getRedirectDomainOptions($selectedDomain)
@@ -1839,8 +1863,9 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Processes submission
      *
-     * @param	string	$error	Error message
-     * @return	bool	true if successful
+     * @param    string $error Error message
+     *
+     * @return    bool    true if successful
      */
     protected function processRedirectSubmission(&$error)
     {
@@ -1848,8 +1873,8 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $error = '';
         if (\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('_edit_save')) {
             $data = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('data');
-            $databaseUpdateData = array();
-            $databaseInsertData = array();
+            $databaseUpdateData = [];
+            $databaseInsertData = [];
             foreach ($data as $fields) {
                 //
                 // Validate
@@ -1869,10 +1894,10 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 // Check for duplicate source URLs
                 $andWhere = ($fields['url_hash'] != '' ? ' AND url_hash<>' . intval($fields['url_hash']) : '');
                 list($row) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('COUNT(*) AS t',
-                    'tx_realurl_redirects',
-                    'url=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($fields['source'], 'tx_realurl_redirects') .
-                        ' AND domain_limit=' . intval($fields['domain_limit']) .
-                        $andWhere);
+                    'tx_hellurl_redirects',
+                    'url=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($fields['source'], 'tx_hellurl_redirects') .
+                    ' AND domain_limit=' . intval($fields['domain_limit']) .
+                    $andWhere);
                 if ($row['t'] > 0) {
                     $error = 'Source URL \'/' . htmlspecialchars($fields['source']) . '\' already exists in the redirect list.';
                     return false;
@@ -1886,30 +1911,30 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 // Process
                 if ($fields['url_hash'] == '') {
                     // New entry
-                    $databaseInsertData[] = array(
+                    $databaseInsertData[] = [
                         'url_hash' => \TYPO3\CMS\Core\Utility\GeneralUtility::md5int($fields['source']),
                         'url' => $fields['source'],
                         'destination' => $fields['target'],
                         'has_moved' => $fields['permanent'] ? 1 : 0,
-                        'domain_limit' => intval($fields['domain_limit'])
-                    );
+                        'domain_limit' => intval($fields['domain_limit']),
+                    ];
                 } else {
                     // Existing entry
-                    $databaseUpdateData[$fields['uid']] = array(
+                    $databaseUpdateData[$fields['uid']] = [
                         'url_hash' => \TYPO3\CMS\Core\Utility\GeneralUtility::md5int($fields['source']),
                         'url' => $fields['source'],
                         'destination' => $fields['target'],
                         'has_moved' => $fields['permanent'] ? 1 : 0,
-                        'domain_limit' => intval($fields['domain_limit'])
-                    );
+                        'domain_limit' => intval($fields['domain_limit']),
+                    ];
                 }
             }
             // Add/update data
             foreach ($databaseInsertData as $data) {
-                $GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_realurl_redirects', $data);
+                $GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_hellurl_redirects', $data);
             }
             foreach ($databaseUpdateData as $uid => $data) {
-                $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_realurl_redirects',
+                $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_redirects',
                     'uid=' . intval($uid),
                     $data);
             }
@@ -1923,6 +1948,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      * Obtains destination URL for the redirect.
      *
      * @param string $url
+     *
      * @return string
      */
     protected function getDestinationRedirectURL($url)
@@ -1986,7 +2012,8 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      *
      * @return string
      */
-    protected function getIconByIconFactory($icon) {
+    protected function getIconByIconFactory($icon)
+    {
         $iconSize = \TYPO3\CMS\Core\Imaging\Icon::SIZE_SMALL;
 
         return $this->iconFactory->getIcon($icon, $iconSize)->render();

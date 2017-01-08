@@ -1,11 +1,12 @@
 <?php
-namespace Tx\Realurl\ViewHelpers;
+namespace Nimut\Hellurl\ViewHelpers;
 
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2004-2005 Kasper Skaarhoj (kasperYYYY@typo3.com)
+ *  (c) 2017 Nicole Cordes (typo3@cordes.co)
  *  (c) 2005-2010 Dmitry Dulepov (dmitry@typo3.org)
+ *  (c) 2004-2005 Kasper Skaarhoj (kasperYYYY@typo3.com)
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -26,9 +27,7 @@ namespace Tx\Realurl\ViewHelpers;
  ***************************************************************/
 
 /**
- * This class is a page browser for the RealURL backend module.
- *
- * @author Dmitry Dulepov <dmitry.dulepov@gmail.com>
+ * This class is a page browser for the HellUrl backend module.
  */
 class PageBrowserViewHelper
 {
@@ -39,8 +38,11 @@ class PageBrowserViewHelper
     const RESULTS_PER_PAGE_DEFAULT = 20;
 
     protected $currentPage;
+
     protected $totalPages;
+
     protected $baseURL;
+
     protected $resultsPerPage;
 
     /**
@@ -122,12 +124,12 @@ class PageBrowserViewHelper
     {
         $extraClass = '';
         if ($pageNumber != $this->currentPage) {
-            $link = array(
+            $link = [
                 '<a href="' . $this->baseURL . '&amp;page=' . $pageNumber . '">',
-                '</a>'
-            );
+                '</a>',
+            ];
         } else {
-            $link = array('', '');
+            $link = ['', ''];
             $extraClass = ' bgColor-20';
         }
 
@@ -141,7 +143,7 @@ class PageBrowserViewHelper
 
     protected function calcTotalPages($totalResults)
     {
-        $this->totalPages = intval($totalResults/$this->resultsPerPage) +
+        $this->totalPages = intval($totalResults / $this->resultsPerPage) +
             (($totalResults % $this->resultsPerPage) != 0 ? 1 : 0);
     }
 }

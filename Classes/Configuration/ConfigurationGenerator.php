@@ -1,45 +1,43 @@
 <?php
-namespace Tx\Realurl\Configuration;
+namespace Nimut\Hellurl\Configuration;
 
 /***************************************************************
-*  Copyright notice
-*
-*  (c) 2007-2010 Dmitry Dulepov (dmitry@typo3.org)
-*  All rights reserved
-*
-*  This script is part of the Typo3 project. The Typo3 project is
-*  free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  The GNU General Public License can be found at
-*  http://www.gnu.org/copyleft/gpl.html.
-*  A copy is found in the textfile GPL.txt and important notices to the license
-*  from the author is found in LICENSE.txt distributed with these scripts.
-*
-*
-*  This script is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  This copyright notice MUST APPEAR in all copies of the script!
-***************************************************************/
+ *  Copyright notice
+ *
+ *  (c) 2017 Nicole Cordes (typo3@cordes.co)
+ *  (c) 2007-2010 Dmitry Dulepov (dmitry@typo3.org)
+ *  All rights reserved
+ *
+ *  This script is part of the Typo3 project. The Typo3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *  A copy is found in the textfile GPL.txt and important notices to the license
+ *  from the author is found in LICENSE.txt distributed with these scripts.
+ *
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
 
-use TYPO3\CMS\Core\Locking\LockFactory;
 use TYPO3\CMS\Core\Locking\LockingStrategyInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Class for generating of automatic RealURL configuration
- *
- * @author	Dmitry Dulepov <dmitry@typo3.org>
+ * Class for generating of automatic HellUrl configuration
  */
 class ConfigurationGenerator
 {
 
-    const AUTOCONFIGURTION_FILE = 'typo3conf/realurl_autoconf.php';
+    const AUTOCONFIGURTION_FILE = 'typo3conf/hellurl_autoconf.php';
 
     /**
      * @var \TYPO3\CMS\Core\Database\DatabaseConnection
@@ -54,7 +52,7 @@ class ConfigurationGenerator
     /**
      * Generates configuration. Locks configuration file for exclusive access to avoid collisions. Will not be stabe on Windows.
      *
-     * @return	void
+     * @return    void
      */
     public function generateConfiguration()
     {
@@ -64,7 +62,7 @@ class ConfigurationGenerator
             $lockObject = $lockFactory->createLocker(
                 $fileName,
                 LockingStrategyInterface::LOCK_CAPABILITY_EXCLUSIVE | LockingStrategyInterface::LOCK_CAPABILITY_NOBLOCK
-                );
+            );
             $lockObject->acquire();
         } else {
             // @deprecated since 7.6, will be removed once 6.2 support is removed
@@ -88,8 +86,9 @@ class ConfigurationGenerator
     /**
      * Performs actual generation.
      *
-     * @param	resource		$fd	FIle descriptor to write to
-     * @return	void
+     * @param    resource $fd FIle descriptor to write to
+     *
+     * @return    void
      */
     protected function doGenerateConfiguration(&$fd)
     {
@@ -97,16 +96,16 @@ class ConfigurationGenerator
 
         $this->hasStaticInfoTables = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('static_info_tables');
 
-        $conf = array();
+        $conf = [];
         $template = $this->getTemplate();
 
         // Find all domains
         $domains = $this->databaseConnection->exec_SELECTgetRows('pid,domainName,redirectTo', 'sys_domain', 'hidden=0',
-                '', '', '', 'domainName');
+            '', '', '', 'domainName');
         if (count($domains) == 0) {
             $conf['_DEFAULT'] = $template;
             $rows = $this->databaseConnection->exec_SELECTgetRows('uid', 'pages',
-                        'deleted=0 AND hidden=0 AND is_siteroot=1', '', '', '1');
+                'deleted=0 AND hidden=0 AND is_siteroot=1', '', '', '1');
             if (count($rows) > 0) {
                 $conf['_DEFAULT']['pagePath']['rootpage_id'] = $rows[0]['uid'];
             }
@@ -131,16 +130,16 @@ class ConfigurationGenerator
         }
 
         // Post process generated configuration
-        if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/realurl/class.tx_realurl_autoconfgen.php']['postProcessConfiguration'])) {
-            foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/realurl/class.tx_realurl_autoconfgen.php']['postProcessConfiguration'] as $userFunc) {
-                $parameters = array(
+        if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/hellurl/class.tx_hellurl_autoconfgen.php']['postProcessConfiguration'])) {
+            foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/hellurl/class.tx_hellurl_autoconfgen.php']['postProcessConfiguration'] as $userFunc) {
+                $parameters = [
                     'config' => &$conf,
-                );
+                ];
                 \TYPO3\CMS\Core\Utility\GeneralUtility::callUserFunction($userFunc, $parameters, $this);
             }
         }
 
-        fwrite($fd, '<' . '?php' . LF . '$GLOBALS[\'TYPO3_CONF_VARS\'][\'EXTCONF\'][\'realurl\']=' .
+        fwrite($fd, '<' . '?php' . LF . '$GLOBALS[\'TYPO3_CONF_VARS\'][\'EXTCONF\'][\'hellurl\']=' .
             \TYPO3\CMS\Core\Utility\ArrayUtility::arrayExport($conf) . ';' . chr(10)
         );
     }
@@ -148,38 +147,38 @@ class ConfigurationGenerator
     /**
      * Creates common configuration template.
      *
-     * @return	array		Template
+     * @return    array        Template
      */
     protected function getTemplate()
     {
-        $confTemplate = array(
-            'init' => array(
+        $confTemplate = [
+            'init' => [
                 'enableCHashCache' => true,
                 'appendMissingSlash' => 'ifNotFile,redirect',
                 'adminJumpToBackend' => true,
                 'enableUrlDecodeCache' => true,
                 'enableUrlEncodeCache' => true,
-                'emptyUrlReturnValue' => \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('TYPO3_SITE_PATH')
-            ),
-            'pagePath' => array(
+                'emptyUrlReturnValue' => \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('TYPO3_SITE_PATH'),
+            ],
+            'pagePath' => [
                 'type' => 'user',
-                'userFunc' => 'Tx\\Realurl\\UriGeneratorAndResolver->main',
+                'userFunc' => 'Nimut\\Hellurl\\UriGeneratorAndResolver->main',
                 'spaceCharacter' => '-',
                 'languageGetVar' => 'L',
-            ),
-            'fileName' => array(
+            ],
+            'fileName' => [
                 'defaultToHTMLsuffixOnPrev' => 0,
                 'acceptHTMLsuffix' => 1,
-            )
-        );
+            ],
+        ];
 
         // Add print feature if TemplaVoila is not loaded
         if (!\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('templavoila')) {
-            $confTemplate['fileName']['index']['print'] = array(
-                    'keyValues' => array(
-                        'type' => 98,
-                    )
-                );
+            $confTemplate['fileName']['index']['print'] = [
+                'keyValues' => [
+                    'type' => 98,
+                ],
+            ];
         }
 
         // Add respectSimulateStaticURLs if SimulateStatic is loaded
@@ -190,12 +189,12 @@ class ConfigurationGenerator
         $this->addLanguages($confTemplate);
 
         // Add from extensions
-        if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/realurl/class.tx_realurl_autoconfgen.php']['extensionConfiguration'])) {
-            foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/realurl/class.tx_realurl_autoconfgen.php']['extensionConfiguration'] as $extKey => $userFunc) {
-                $params = array(
+        if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/hellurl/class.tx_hellurl_autoconfgen.php']['extensionConfiguration'])) {
+            foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/hellurl/class.tx_hellurl_autoconfgen.php']['extensionConfiguration'] as $extKey => $userFunc) {
+                $params = [
                     'config' => $confTemplate,
-                    'extKey' => $extKey
-                );
+                    'extKey' => $extKey,
+                ];
                 $var = \TYPO3\CMS\Core\Utility\GeneralUtility::callUserFunction($userFunc, $params, $this);
                 if ($var) {
                     $confTemplate = $var;
@@ -209,8 +208,9 @@ class ConfigurationGenerator
     /**
      * Adds languages to configuration
      *
-     * @param	array		$conf	Configuration (passed as reference)
-     * @return	void
+     * @param    array $conf Configuration (passed as reference)
+     *
+     * @return    void
      */
     protected function addLanguages(&$conf)
     {
@@ -220,14 +220,14 @@ class ConfigurationGenerator
             $languages = $this->databaseConnection->exec_SELECTgetRows('t1.uid AS uid,t1.uid AS lg_iso_2', 'sys_language t1', 't1.hidden=0');
         }
         if (count($languages) > 0) {
-            $conf['preVars'] = array(
-                0 => array(
+            $conf['preVars'] = [
+                0 => [
                     'GETvar' => 'L',
-                    'valueMap' => array(
-                    ),
-                    'noMatch' => 'bypass'
-                ),
-            );
+                    'valueMap' => [
+                    ],
+                    'noMatch' => 'bypass',
+                ],
+            ];
             foreach ($languages as $lang) {
                 $conf['preVars'][0]['valueMap'][strtolower($lang['lg_iso_2'])] = $lang['uid'];
             }

@@ -1,24 +1,27 @@
 {
-	"name": "helhum/realurl",
+	"name": "nimut/hellurl",
 	"type": "typo3-cms-extension",
-	"description": "RealURL: speaking paths for TYPO3",
-	"homepage": "http://typo3.org",
+	"description": "HellUrl: speaking paths for TYPO3",
+	"homepage": "https://github.com/Nimut/TYPO3-hellurl",
 	"license": "GPL-2.0+",
 
 	"require": {
 		"typo3/cms-core": "^6.2.6 || ^7.6 || >=8.0.0 <8.6"
 	},
 	"replace": {
-		"realurl": "self.version"
+		"dmitryd/typo3-realurl": "*",
+		"helhum/realurl": "*",
+		"typo3-ter/hellurl": "self.version",
+		"typo3-ter/realurl": "*"
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "2.0.x-dev"
+			"dev-master": "1.x-dev"
 		}
 	},
 	"autoload": {
 		"psr-4": {
-			"Tx\\Realurl\\": "Classes"
+			"Nimut\\Hellurl\\": "Classes/"
 		}
 	}
 }

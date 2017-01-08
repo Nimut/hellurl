@@ -1,45 +1,44 @@
 <?php
-namespace Tx\Realurl\Hooks\DataHandling;
+namespace Nimut\Hellurl\Hooks\DataHandling;
 
 /***************************************************************
-*  Copyright notice
-*
-*  (c) 2010 Dmitry Dulepov (dmitry@typo3.org)
-*  All rights reserved
-*
-*  This script is part of the TYPO3 project. The TYPO3 project is
-*  free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  The GNU General Public License can be found at
-*  http://www.gnu.org/copyleft/gpl.html.
-*  A copy is found in the textfile GPL.txt and important notices to the license
-*  from the author is found in LICENSE.txt distributed with these scripts.
-*
-*
-*  This script is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  This copyright notice MUST APPEAR in all copies of the script!
-***************************************************************/
+ *  Copyright notice
+ *
+ *  (c) 2017 Nicole Cordes (typo3@cordes.co)
+ *  (c) 2010 Dmitry Dulepov (dmitry@typo3.org)
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *  A copy is found in the textfile GPL.txt and important notices to the license
+ *  from the author is found in LICENSE.txt distributed with these scripts.
+ *
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
 
-use Tx\Realurl\Configuration\ConfigurationGenerator;
+use Nimut\Hellurl\Configuration\ConfigurationGenerator;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /**
  * TCEmain hook to update various caches when data is modified in TYPO3 Backend
- *
- * @author	Dmitry Dulepov <dmitry@typo3.org>
  */
 class DataHandlerHook implements SingletonInterface
 {
 
     /**
-     * RealURL configuration for the current host
+     * HellUrl configuration for the current host
      *
      * @var array
      */
@@ -49,6 +48,7 @@ class DataHandlerHook implements SingletonInterface
      * Removes autoconfiguration file if table name is sys_domain
      *
      * @param string $tableName
+     *
      * @return void
      */
     protected function clearAutoConfiguration($tableName)
@@ -59,19 +59,20 @@ class DataHandlerHook implements SingletonInterface
     }
 
     /**
-     * Clears RealURL caches if necessary
+     * Clears HellUrl caches if necessary
      *
      * @param string $command
      * @param string $tableName
      * @param int $recordId
+     *
      * @return void
      */
     protected function clearCaches($command, $tableName, $recordId)
     {
         if ($this->isTableForCache($tableName)) {
             if ($command === 'delete' || $command === 'move') {
-                list($pageId, ) = $this->getPageData($tableName, $recordId);
-                $this->fetchRealURLConfiguration($pageId);
+                list($pageId,) = $this->getPageData($tableName, $recordId);
+                $this->fetchHellUrlConfiguration($pageId);
                 if ($command === 'delete') {
                     $this->clearPathCache($pageId);
                 } else {
@@ -86,15 +87,16 @@ class DataHandlerHook implements SingletonInterface
      * Clears URL decode and encode caches for the given page
      *
      * @param $pageId
+     *
      * @return void
      */
     protected function clearOtherCaches($pageId)
     {
         /** @noinspection PhpUndefinedMethodInspection */
-        $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_realurl_urldecodecache',
+        $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_hellurl_urldecodecache',
             'page_id=' . intval($pageId));
         /** @noinspection PhpUndefinedMethodInspection */
-        $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_realurl_urlencodecache',
+        $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_hellurl_urlencodecache',
             'page_id=' . intval($pageId));
     }
 
@@ -102,12 +104,13 @@ class DataHandlerHook implements SingletonInterface
      * Clears path cache for the given page id
      *
      * @param int $pageId
+     *
      * @return void
      */
     protected function clearPathCache($pageId)
     {
         /** @noinspection PhpUndefinedMethodInspection */
-        $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_realurl_pathcache',
+        $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_hellurl_pathcache',
             'page_id=' . intval($pageId));
     }
 
@@ -117,14 +120,15 @@ class DataHandlerHook implements SingletonInterface
      * @param string $command
      * @param string $tableName
      * @param mixed $recordId
+     *
      * @return void
      */
     protected function clearUniqueAlias($command, $tableName, $recordId)
     {
         if ($command === 'delete') {
             /** @noinspection PhpUndefinedMethodInspection */
-            $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_realurl_uniqalias',
-                'tablename=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($tableName, 'tx_realurl_uniqalias') .
+            $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_hellurl_uniqalias',
+                'tablename=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($tableName, 'tx_hellurl_uniqalias') .
                 ' AND value_id=' . intval($recordId));
         }
     }
@@ -134,6 +138,7 @@ class DataHandlerHook implements SingletonInterface
      *
      * @param int $pageId
      * @param int $languageId
+     *
      * @return void
      */
     protected function expirePathCache($pageId, $languageId)
@@ -143,17 +148,18 @@ class DataHandlerHook implements SingletonInterface
         $pageIds[] = intval($pageId);
 
         /** @noinspection PhpUndefinedMethodInspection */
-        $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_realurl_pathcache',
+        $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_pathcache',
             'page_id IN (' . implode(',', $pageIds) . ') AND language_id=' . intval($languageId) . ' AND expire=0',
-            array(
-                'expire' => $expirationTime
-            ));
+            [
+                'expire' => $expirationTime,
+            ]);
     }
 
     /**
      * Expires record in the path cache
      *
      * @param int $pageId
+     *
      * @return void
      */
     protected function expirePathCacheForAllLanguages($pageId)
@@ -163,36 +169,37 @@ class DataHandlerHook implements SingletonInterface
         $pageIds[] = intval($pageId);
 
         /** @noinspection PhpUndefinedMethodInspection */
-        $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_realurl_pathcache',
+        $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_pathcache',
             'page_id IN (' . implode(',', $pageIds) . ') AND expire=0',
-            array(
-                'expire' => $expirationTime
-            ));
+            [
+                'expire' => $expirationTime,
+            ]);
     }
 
     /**
-     * Fetches RealURl configuration for the given page
+     * Fetches HellURl configuration for the given page
      *
      * @param int $pageId
+     *
      * @return void
      */
-    protected function fetchRealURLConfiguration($pageId)
+    protected function fetchHellUrlConfiguration($pageId)
     {
         $rootLine = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($pageId);
         $rootPageId = $rootLine[1]['uid'];
-        $this->config = array();
-        if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl'])) {
-            foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl'] as $config) {
+        $this->config = [];
+        if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl'])) {
+            foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl'] as $config) {
                 if (is_array($config) && $config['pagePath']['rootpage_id'] == $rootPageId) {
                     $this->config = $config;
                     return;
                 }
             }
-            if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl']['_DEFAULT'])) {
-                $this->config = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl']['_DEFAULT'];
+            if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl']['_DEFAULT'])) {
+                $this->config = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl']['_DEFAULT'];
             }
         } else {
-            \TYPO3\CMS\Core\Utility\GeneralUtility::sysLog('RealURL is not configured! Please, configure it or uninstall.', 'RealURL', 3);
+            \TYPO3\CMS\Core\Utility\GeneralUtility::sysLog('HellUrl is not configured! Please, configure it or uninstall.', 'RealURL', 3);
         }
     }
 
@@ -200,11 +207,12 @@ class DataHandlerHook implements SingletonInterface
      * Returns the IDs of all child pages of a given $pageID.
      *
      * @param $pageId integer Page ID to start searching
+     *
      * @return int[] Child pages
      */
     protected function getChildPages($pageId)
     {
-        $children  = array();
+        $children = [];
 
         /** @var $tree \TYPO3\CMS\Backend\Tree\View\PageTreeView */
         $tree = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Tree\\View\\PageTreeView');
@@ -236,6 +244,7 @@ class DataHandlerHook implements SingletonInterface
      *
      * @param $tableName
      * @param $id
+     *
      * @return array First member is page id, second is language
      */
     protected static function getPageData($tableName, $id)
@@ -243,7 +252,7 @@ class DataHandlerHook implements SingletonInterface
         if ($tableName === 'pages_language_overlay') {
             $result = self::getInfoFromOverlayPid($id);
         } else {
-            $result = array($id, 0);
+            $result = [$id, 0];
         }
         return $result;
     }
@@ -252,17 +261,18 @@ class DataHandlerHook implements SingletonInterface
      * Retrieves field list to check for modification
      *
      * @param string $tableName
-     * @return	array
+     *
+     * @return    array
      */
     protected function getFieldList($tableName)
     {
         if ($tableName === 'pages_language_overlay') {
-            $fieldList = TX_REALURL_SEGTITLEFIELDLIST_PLO;
+            $fieldList = TX_HELLURL_SEGTITLEFIELDLIST_PLO;
         } else {
             if (isset($this->config['pagePath']['segTitleFieldList'])) {
                 $fieldList = $this->config['pagePath']['segTitleFieldList'];
             } else {
-                $fieldList = TX_REALURL_SEGTITLEFIELDLIST_DEFAULT;
+                $fieldList = TX_HELLURL_SEGTITLEFIELDLIST_DEFAULT;
             }
         }
         $fieldList .= ',hidden';
@@ -272,21 +282,23 @@ class DataHandlerHook implements SingletonInterface
     /**
      * Retrieves real page id given its overlay id
      *
-     * @param	int		$pid	Page id
-     * @return	array		Array with two members: real page uid and sys_language_uid
+     * @param    int $pid Page id
+     *
+     * @return    array        Array with two members: real page uid and sys_language_uid
      */
     protected static function getInfoFromOverlayPid($pid)
     {
         /** @noinspection PhpUndefinedMethodInspection */
         list($rec) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('pid,sys_language_uid',
             'pages_language_overlay', 'uid=' . intval($pid));
-        return array($rec['pid'], $rec['sys_language_uid']);
+        return [$rec['pid'], $rec['sys_language_uid']];
     }
 
     /**
      * Checks if the update table can affect cache entries
      *
      * @param string $tableName
+     *
      * @return bool
      */
     protected static function isTableForCache($tableName)
@@ -300,8 +312,8 @@ class DataHandlerHook implements SingletonInterface
     public function flushCacheTables(array $arguments)
     {
         if (isset($arguments['cacheCmd'])) {
-            $GLOBALS['TYPO3_DB']->exec_TRUNCATEquery('tx_realurl_urlencodecache');
-            $GLOBALS['TYPO3_DB']->exec_TRUNCATEquery('tx_realurl_urldecodecache');
+            $GLOBALS['TYPO3_DB']->exec_TRUNCATEquery('tx_hellurl_urlencodecache');
+            $GLOBALS['TYPO3_DB']->exec_TRUNCATEquery('tx_hellurl_urldecodecache');
         }
     }
 
@@ -312,6 +324,7 @@ class DataHandlerHook implements SingletonInterface
      * @param string $command
      * @param string $tableName
      * @param mixed $recordId
+     *
      * @return void
      */
     public function processCmdmap_postProcess($command, $tableName, $recordId)
@@ -329,6 +342,7 @@ class DataHandlerHook implements SingletonInterface
      * @param int $recordId
      * @param array $databaseData
      * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
+     *
      * @return void
      * @todo Expire unique alias cache: how to get the proper timeout value easily here?
      */
@@ -342,33 +356,35 @@ class DataHandlerHook implements SingletonInterface
      * Hook function for clearing page cache
      *
      * @param array $params Params for hook
+     *
      * @return void
      */
     public function clearPageRelatedUrlCaches($params)
     {
-        $pageIdArray = $params['table'] === 'pages' ? array($params['uid']) : $params['pageIdArray'];
+        $pageIdArray = $params['table'] === 'pages' ? [$params['uid']] : $params['pageIdArray'];
         if (is_array($pageIdArray) && count($pageIdArray) > 0) {
             /** @noinspection PhpUndefinedMethodInspection */
             $pageIdList = implode(',', $GLOBALS['TYPO3_DB']->cleanIntArray($pageIdArray));
             /** @noinspection PhpUndefinedMethodInspection */
-            $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_realurl_urlencodecache', 'page_id IN (' . $pageIdList . ')');
+            $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_hellurl_urlencodecache', 'page_id IN (' . $pageIdList . ')');
             /** @noinspection PhpUndefinedMethodInspection */
-            $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_realurl_urldecodecache', 'page_id IN (' . $pageIdList . ')');
+            $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_hellurl_urldecodecache', 'page_id IN (' . $pageIdList . ')');
             /** @noinspection PhpUndefinedMethodInspection */
-            $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_realurl_pathcache', 'page_id IN (' . $pageIdList . ') AND expire>0 AND expire<=' . time());
+            $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_hellurl_pathcache', 'page_id IN (' . $pageIdList . ') AND expire>0 AND expire<=' . time());
         }
     }
 
     /**
-     * Processes page and content changes in regard to RealURL caches.
+     * Processes page and content changes in regard to HellUrl caches.
      *
      * @param string $status
      * @param string $tableName
      * @param int $recordId
      * @param array $databaseData
      * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
+     *
      * @return void
-     * @todo Handle changes to tx_realurl_exclude recursively
+     * @todo Handle changes to tx_hellurl_exclude recursively
      */
     protected function processContentUpdates($status, $tableName, $recordId, array $databaseData, \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler)
     {
@@ -377,7 +393,7 @@ class DataHandlerHook implements SingletonInterface
                 $recordId = intval($dataHandler->substNEWwithIDs[$recordId]);
             }
             list($pageId, $languageId) = static::getPageData($tableName, $recordId);
-            $this->fetchRealURLConfiguration($pageId);
+            $this->fetchHellUrlConfiguration($pageId);
             if ($this->shouldFixCaches($tableName, $databaseData)) {
                 if (isset($databaseData['alias'])) {
                     $this->expirePathCacheForAllLanguages($pageId);
@@ -395,6 +411,7 @@ class DataHandlerHook implements SingletonInterface
      *
      * @param string $tableName
      * @param array $databaseData
+     *
      * @return bool
      */
     protected function shouldFixCaches($tableName, array $databaseData)

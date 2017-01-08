@@ -1,7 +1,7 @@
 #
-# Table structure for table 'tx_realurl_pathcache'
+# Table structure for table 'tx_hellurl_pathcache'
 #
-CREATE TABLE tx_realurl_pathcache (
+CREATE TABLE tx_hellurl_pathcache (
 	cache_id int(11) NOT NULL auto_increment,
 	page_id int(11) DEFAULT '0' NOT NULL,
 	language_id int(11) DEFAULT '0' NOT NULL,
@@ -17,9 +17,9 @@ CREATE TABLE tx_realurl_pathcache (
 ) ENGINE=InnoDB;
 
 #
-# Table structure for table 'tx_realurl_uniqalias'
+# Table structure for table 'tx_hellurl_uniqalias'
 #
-CREATE TABLE tx_realurl_uniqalias (
+CREATE TABLE tx_hellurl_uniqalias (
 	uid int(11) NOT NULL auto_increment,
 	tstamp int(11) DEFAULT '0' NOT NULL,
 	tablename varchar(255) DEFAULT '' NOT NULL,
@@ -32,14 +32,14 @@ CREATE TABLE tx_realurl_uniqalias (
 
 	PRIMARY KEY (uid),
 	KEY tablename (tablename),
-	KEY bk_realurl01 (field_alias(20),field_id,value_id,lang,expire),
-	KEY bk_realurl02 (tablename(32),field_alias(20),field_id,value_alias(20),expire)
+	KEY bk_hellurl01 (field_alias(20),field_id,value_id,lang,expire),
+	KEY bk_hellurl02 (tablename(32),field_alias(20),field_id,value_alias(20),expire)
 );
 
 #
-# Table structure for table 'tx_realurl_chashcache'
+# Table structure for table 'tx_hellurl_chashcache'
 #
-CREATE TABLE tx_realurl_chashcache (
+CREATE TABLE tx_hellurl_chashcache (
 	spurl_hash char(32) DEFAULT '' NOT NULL,
 	chash_string varchar(32) DEFAULT '' NOT NULL,
 	spurl_string text,
@@ -49,11 +49,11 @@ CREATE TABLE tx_realurl_chashcache (
 ) ENGINE=InnoDB;
 
 #
-# Table structure for table 'tx_realurl_urldecodecache'
+# Table structure for table 'tx_hellurl_urldecodecache'
 # Cache for Speaking URLS when translated to internal GET vars.
 # Flushable
 #
-CREATE TABLE tx_realurl_urldecodecache (
+CREATE TABLE tx_hellurl_urldecodecache (
 	url_hash char(32) DEFAULT '' NOT NULL,
 	spurl tinytext NOT NULL,
 	content blob NOT NULL,
@@ -66,9 +66,9 @@ CREATE TABLE tx_realurl_urldecodecache (
 ) ENGINE=InnoDB;
 
 #
-# Table structure for table 'tx_realurl_urlencodecache'
+# Table structure for table 'tx_hellurl_urlencodecache'
 #
-CREATE TABLE tx_realurl_urlencodecache (
+CREATE TABLE tx_hellurl_urlencodecache (
 	url_hash char(32) DEFAULT '' NOT NULL,
 	origparams tinytext NOT NULL,
 	internalExtras tinytext NOT NULL,
@@ -80,7 +80,7 @@ CREATE TABLE tx_realurl_urlencodecache (
 	KEY page_id (page_id)
 ) ENGINE=InnoDB;
 
-CREATE TABLE tx_realurl_errorlog (
+CREATE TABLE tx_hellurl_errorlog (
 	url_hash int(11) DEFAULT '0' NOT NULL,
 	url text NOT NULL,
 	error text NOT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE tx_realurl_errorlog (
 	KEY counter (counter,tstamp)
 );
 
-CREATE TABLE tx_realurl_redirects (
+CREATE TABLE tx_hellurl_redirects (
 	uid int(11) NOT NULL auto_increment,
 	url_hash int(11) DEFAULT '0' NOT NULL,
 	url text NOT NULL,
@@ -113,29 +113,29 @@ CREATE TABLE tx_realurl_redirects (
 # Modifying pages table
 #
 CREATE TABLE pages (
-	tx_realurl_pathsegment varchar(255) DEFAULT '' NOT NULL,
-	tx_realurl_pathoverride int(1) DEFAULT '0' NOT NULL,
-	tx_realurl_exclude int(1) DEFAULT '0' NOT NULL,
-	tx_realurl_nocache int(1) DEFAULT '0' NOT NULL
+	tx_hellurl_pathsegment varchar(255) DEFAULT '' NOT NULL,
+	tx_hellurl_pathoverride int(1) DEFAULT '0' NOT NULL,
+	tx_hellurl_exclude int(1) DEFAULT '0' NOT NULL,
+	tx_hellurl_nocache int(1) DEFAULT '0' NOT NULL
 );
 
 #
 # Modifying pages_language_overlay table
 #
 CREATE TABLE pages_language_overlay (
-	tx_realurl_pathsegment varchar(255) DEFAULT '' NOT NULL
+	tx_hellurl_pathsegment varchar(255) DEFAULT '' NOT NULL
 );
 
 #
 # Modifying sys_domain table
 #
 CREATE TABLE sys_domain (
-	KEY tx_realurl (domainName,hidden)
+	KEY tx_hellurl (domainName,hidden)
 );
 
 #
 # Modifying sys_template table
 #
 CREATE TABLE sys_template (
-	KEY tx_realurl (root,hidden)
+	KEY tx_hellurl (root,hidden)
 );
