@@ -4,14 +4,14 @@
 	"description": "HellUrl: speaking paths for TYPO3",
 	"homepage": "https://github.com/Nimut/TYPO3-hellurl",
 	"license": "GPL-2.0+",
-
 	"require": {
 		"typo3/cms-core": "^6.2.6 || ^7.6 || >=8.0.0 <8.6"
 	},
 	"replace": {
-		"dmitryd/typo3-realurl": "*",
-		"helhum/realurl": "*",
+		"hellurl": "self.version",
 		"typo3-ter/hellurl": "self.version",
+		"helhum/realurl": "*",
+		"dmitryd/typo3-realurl": "*",
 		"typo3-ter/realurl": "*"
 	},
 	"extra": {
