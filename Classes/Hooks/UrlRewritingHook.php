@@ -70,7 +70,7 @@ class UrlRewritingHook implements SingletonInterface
 
     public $dirParts; // All directory parts of the string
 
-    public $orig_paramKeyValues = []; // Contains the index of GETvars that the URL had when the encoding began.
+    public $orig_paramKeyValues = array(); // Contains the index of GETvars that the URL had when the encoding began.
 
     public $appendedSlash = false; // Set true if slash is appended
 
@@ -105,7 +105,7 @@ class UrlRewritingHook implements SingletonInterface
 
     public $multidomain = false;
 
-    public $urlPrepend = [];
+    public $urlPrepend = array();
 
     public $useMySQLExtendedSyntax = false;
 
@@ -256,7 +256,7 @@ class UrlRewritingHook implements SingletonInterface
         $this->setConfig();
         $adjustedConfiguration = $this->adjustConfigurationByHost('encode', $params);
         $this->adjustRootPageId();
-        $internalExtras = [];
+        $internalExtras = array();
 
         // Init "Admin Jump"; If frontend edit was enabled by the current URL of the page, set it again in the generated URL (and disable caching!)
         if (!$params['TCEmainHook']) {
@@ -315,11 +315,11 @@ class UrlRewritingHook implements SingletonInterface
         // Call hooks
         if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl']['encodeSpURL_postProc'])) {
             foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl']['encodeSpURL_postProc'] as $userFunc) {
-                $hookParams = [
+                $hookParams = array(
                     'pObj' => &$this,
                     'params' => $params,
                     'URL' => &$newUrl,
-                ];
+                );
                 GeneralUtility::callUserFunction($userFunc, $hookParams, $this);
             }
         }
@@ -385,11 +385,11 @@ class UrlRewritingHook implements SingletonInterface
      */
     protected function encodeSpURL_doEncode($inputQuery, $origUrl = '')
     {
-        $this->cHashParameters = [];
+        $this->cHashParameters = array();
         $this->rebuildCHash = false;
 
         // Extract all GET parameters into an ARRAY
-        $paramKeyValues = [];
+        $paramKeyValues = array();
         $GETparams = explode('&', $inputQuery);
         foreach ($GETparams as $paramAndValue) {
             list($p, $v) = explode('=', $paramAndValue, 2);
@@ -401,7 +401,7 @@ class UrlRewritingHook implements SingletonInterface
         $this->orig_paramKeyValues = $paramKeyValues;
 
         // Init array in which to collect the "directories" of the URL
-        $pathParts = [];
+        $pathParts = array();
 
         // Pre-vars
         $this->encodeSpURL_setSequence($this->extConf['preVars'], $paramKeyValues, $pathParts);
@@ -443,7 +443,7 @@ class UrlRewritingHook implements SingletonInterface
 
         // Manage remaining GET parameters
         if (count($paramKeyValues)) {
-            $q = [];
+            $q = array();
             foreach ($paramKeyValues as $k => $v) {
                 $q[] = $this->rawurlencodeParam($k) . '=' . rawurlencode($v);
             }
@@ -477,13 +477,13 @@ class UrlRewritingHook implements SingletonInterface
         // Creating page path
         switch ((string)$this->extConf['pagePath']['type']) {
             case 'user':
-                $params = [
+                $params = array(
                     'paramKeyValues' => &$paramKeyValues,
                     'pathParts' => &$pathParts,
                     'pObj' => &$this,
                     'conf' => $this->extConf['pagePath'],
                     'mode' => 'encode',
-                ];
+                );
                 GeneralUtility::callUserFunction($this->extConf['pagePath']['userFunc'], $params, $this);
                 break;
             default: // Default: Just passing through the ID/alias of the page:
@@ -567,7 +567,7 @@ class UrlRewritingHook implements SingletonInterface
         // Look if any filename matches the remaining variables
         if (is_array($this->extConf['fileName']['index'])) {
             foreach ($this->extConf['fileName']['index'] as $keyWord => $cfg) {
-                $pathParts = [];
+                $pathParts = array();
                 if ($this->encodeSpURL_setSingle($keyWord, $cfg['keyValues'], $paramKeyValues, $pathParts)) {
                     return $keyWord != '_DEFAULT' ? $keyWord : '';
                 }
@@ -649,7 +649,7 @@ class UrlRewritingHook implements SingletonInterface
                             $GETvarVal = $parameterSet ? $paramKeyValues[$GETvar] : '';
 
                             // Set reverse map
-                            $revMap = is_array($setup['valueMap']) ? array_flip($setup['valueMap']) : [];
+                            $revMap = is_array($setup['valueMap']) ? array_flip($setup['valueMap']) : array();
 
                             if (isset($revMap[$GETvarVal])) {
                                 $prevVal = $GETvarVal;
@@ -666,13 +666,13 @@ class UrlRewritingHook implements SingletonInterface
                                 $pathParts[] = '';
                                 $this->rebuildCHash |= $parameterSet;
                             } elseif ($setup['userFunc']) {
-                                $params = [
+                                $params = array(
                                     'pObj' => &$this,
                                     'value' => $GETvarVal,
                                     'decodeAlias' => false,
                                     'pathParts' => &$pathParts,
                                     'setup' => $setup,
-                                ];
+                                );
                                 $prevVal = $GETvarVal;
                                 $GETvarVal = GeneralUtility::callUserFunction($setup['userFunc'], $params, $this);
                                 $pathParts[] = rawurlencode($GETvarVal);
@@ -784,14 +784,14 @@ class UrlRewritingHook implements SingletonInterface
                 }
 
                 if ($this->extConf['init']['enableUrlEncodeCache'] && $this->canCachePageURL($this->encodePageId)) {
-                    $insertFields = [
+                    $insertFields = array(
                         'url_hash' => $hash,
                         'origparams' => $urlData,
                         'internalExtras' => count($internalExtras) ? serialize($internalExtras) : '',
                         'content' => $setEncodedURL,
                         'page_id' => $this->encodePageId,
                         'tstamp' => time(),
-                    ];
+                    );
                     if ($this->useMySQLExtendedSyntax) {
                         /** @noinspection PhpUndefinedMethodInspection */
                         $query = $GLOBALS['TYPO3_DB']->INSERTquery('tx_hellurl_urlencodecache', $insertFields);
@@ -872,11 +872,11 @@ class UrlRewritingHook implements SingletonInterface
 
                 if (!is_array($row)) {
                     // Nothing found, insert to the cache
-                    $data = [
+                    $data = array(
                         'spurl_hash' => $spUrlHash,
                         'spurl_string' => $this->enableChashUrlDebug ? $stringForHash : null,
                         'chash_string' => $paramKeyValues['cHash'],
-                    ];
+                    );
                     /** @noinspection PhpUndefinedMethodInspection */
                     $GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_hellurl_chashcache', $data);
                 } else {
@@ -886,9 +886,9 @@ class UrlRewritingHook implements SingletonInterface
                         // insert, that might be a bug or mean that encryptionKey was
                         // changed so cHash values will be different now
                         // In any case we will just silently update the value
-                        $data = [
+                        $data = array(
                             'chash_string' => $paramKeyValues['cHash'],
-                        ];
+                        );
                         /** @noinspection PhpUndefinedMethodInspection */
                         $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_chashcache',
                             'spurl_hash=' . $spUrlHashQuoted, $data);
@@ -948,11 +948,11 @@ class UrlRewritingHook implements SingletonInterface
             // Call hooks
             if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl']['decodeSpURL_preProc'])) {
                 foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl']['decodeSpURL_preProc'] as $userFunc) {
-                    $hookParams = [
+                    $hookParams = array(
                         'pObj' => &$this,
                         'params' => $params,
                         'URL' => &$speakingURIpath,
-                    ];
+                    );
                     GeneralUtility::callUserFunction($userFunc, $hookParams, $this);
                 }
             }
@@ -976,7 +976,7 @@ class UrlRewritingHook implements SingletonInterface
                     }
                     if ($this->appendedSlash && count($options) > 0) {
                         foreach ($options as $option) {
-                            $matches = [];
+                            $matches = array();
                             if (preg_match('/^redirect(\[(30[1237])\])?$/', $option, $matches)) {
                                 $code = count($matches) > 1 ? $matches[2] : 301;
                                 $status = 'HTTP/1.1 ' . $code . ' TYPO3 HellUrl redirect M' . __LINE__;
@@ -1106,15 +1106,15 @@ class UrlRewritingHook implements SingletonInterface
             '', 'domain_limit DESC');
         if (is_array($redirectRow)) {
             // Update statistics
-            $fields_values = [
+            $fields_values = array(
                 'counter' => 'counter+1',
                 'tstamp' => time(),
                 'last_referer' => GeneralUtility::getIndpEnv('HTTP_REFERER'),
-            ];
+            );
             /** @noinspection PhpUndefinedMethodInspection */
             $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_redirects',
                 'url_hash=' . $hash . ' AND url=' . $url . ' AND domain_limit=' . $redirectRow['domain_limit'],
-                $fields_values, ['counter']);
+                $fields_values, array('counter'));
 
             // Redirect
             $redirectCode = ($redirectRow['has_moved'] ? 301 : 302);
@@ -1155,7 +1155,7 @@ class UrlRewritingHook implements SingletonInterface
     {
 
         // Cached info
-        $cachedInfo = [];
+        $cachedInfo = array();
 
         // Convert URL to segments
         $pathParts = explode('/', $speakingURIpath);
@@ -1197,7 +1197,7 @@ class UrlRewritingHook implements SingletonInterface
         }
 
         // Merge Get vars together
-        $cachedInfo['GET_VARS'] = [];
+        $cachedInfo['GET_VARS'] = array();
         if (is_array($pre_GET_VARS)) {
             ArrayUtility::mergeRecursiveWithOverrule($cachedInfo['GET_VARS'], $pre_GET_VARS);
         }
@@ -1246,14 +1246,14 @@ class UrlRewritingHook implements SingletonInterface
     protected function decodeSpURL_createQueryStringParam($paramArr, $prependString = '')
     {
         if (!is_array($paramArr)) {
-            return [$prependString . '=' . $paramArr];
+            return array($prependString . '=' . $paramArr);
         }
 
         if (count($paramArr) == 0) {
-            return [];
+            return array();
         }
 
-        $paramList = [];
+        $paramList = array();
         foreach ($paramArr as $var => $value) {
             $paramList = array_merge($paramList, $this->decodeSpURL_createQueryStringParam($value, $prependString . '[' . $var . ']'));
         }
@@ -1274,7 +1274,7 @@ class UrlRewritingHook implements SingletonInterface
             return $_SERVER['QUERY_STRING'];
         }
 
-        $parameters = [];
+        $parameters = array();
         foreach ($getVars as $var => $value) {
             $parameters = array_merge($parameters, $this->decodeSpURL_createQueryStringParam($value, $var));
         }
@@ -1306,18 +1306,18 @@ class UrlRewritingHook implements SingletonInterface
         // Creating page path
         switch ((string)$this->extConf['pagePath']['type']) {
             case 'user':
-                $params = [
+                $params = array(
                     'pathParts' => &$pathParts,
                     'pObj' => &$this,
                     'conf' => $this->extConf['pagePath'],
                     'mode' => 'decode',
-                ];
+                );
 
                 $result = GeneralUtility::callUserFunction($this->extConf['pagePath']['userFunc'], $params, $this);
                 break;
             default: // Default: Just passing through the ID/alias of the page:
                 $value = array_shift($pathParts);
-                $result = [$value];
+                $result = array($value);
                 break;
         }
 
@@ -1348,7 +1348,7 @@ class UrlRewritingHook implements SingletonInterface
 
             // If a get string is created, then
             if ($GET_string) {
-                $GET_VARS = [];
+                $GET_VARS = array();
                 parse_str($GET_string, $GET_VARS);
                 return $GET_VARS;
             }
@@ -1417,7 +1417,7 @@ class UrlRewritingHook implements SingletonInterface
 
             // If a get string is created, then
             if ($GET_string) {
-                $GET_VARS = [];
+                $GET_VARS = array();
                 parse_str($GET_string, $GET_VARS);
                 $this->decodeSpURL_fixMagicQuotes($GET_VARS);
                 $this->decodeSpURL_fixBrackets($GET_VARS);
@@ -1451,7 +1451,7 @@ class UrlRewritingHook implements SingletonInterface
      */
     protected function decodeSpURL_fixBrackets(&$arr)
     {
-        $bad_keys = [];
+        $bad_keys = array();
         foreach ($arr as $k => $v) {
             if (is_array($v)) {
                 $this->decodeSpURL_fixBrackets($arr[$k]);
@@ -1478,7 +1478,7 @@ class UrlRewritingHook implements SingletonInterface
      */
     protected function decodeSpURL_decodeFileName(array &$pathParts)
     {
-        $getVars = [];
+        $getVars = array();
         $fileName = array_pop($pathParts);
         $fileParts = GeneralUtility::revExplode('.', $fileName, 2);
         if (count($fileParts) == 2 && !$fileParts[1]) {
@@ -1486,7 +1486,7 @@ class UrlRewritingHook implements SingletonInterface
         }
         list($segment, $extension) = $fileParts;
         if ($extension) {
-            $getVars = [];
+            $getVars = array();
             if (!$this->decodeSpURL_decodeFileName_lookupInIndex($fileName, $segment, $extension, $pathParts, $getVars)) {
                 if (!$this->decodeSpURL_decodeFileName_checkHtmlSuffix($fileName, $segment, $extension, $pathParts)) {
                     $this->decodeSpURL_throw404('File "' . $fileName . '" was not found (1)!');
@@ -1666,14 +1666,14 @@ class UrlRewritingHook implements SingletonInterface
                             } elseif ($setup['noMatch'] == 'null') { // If no match and "null" is set, then break (without setting any value!)
                                 break;
                             } elseif ($setup['userFunc']) {
-                                $params = [
+                                $params = array(
                                     'decodeAlias' => true,
                                     'origValue' => $origValue,
                                     'pathParts' => &$pathParts,
                                     'pObj' => &$this,
                                     'value' => $value,
                                     'setup' => $setup,
-                                ];
+                                );
                                 $value = GeneralUtility::callUserFunction($setup['userFunc'], $params, $this);
                             } elseif (is_array($setup['lookUpTable'])) {
                                 $temp = $value;
@@ -1744,7 +1744,7 @@ class UrlRewritingHook implements SingletonInterface
             $hash = GeneralUtility::md5int($this->speakingURIpath_procValue);
             $rootpage_id = intval($this->extConf['pagePath']['rootpage_id']);
             $cond = 'url_hash=' . intval($hash) . ' AND rootpage_id=' . $rootpage_id;
-            $fields_values = [
+            $fields_values = array(
                 'url_hash' => $hash,
                 'url' => $this->speakingURIpath_procValue,
                 'error' => $msg,
@@ -1753,7 +1753,7 @@ class UrlRewritingHook implements SingletonInterface
                 'cr_date' => time(),
                 'rootpage_id' => $rootpage_id,
                 'last_referer' => GeneralUtility::getIndpEnv('HTTP_REFERER'),
-            ];
+            );
             if ($this->useMySQLExtendedSyntax) {
                 /** @noinspection PhpUndefinedMethodInspection */
                 $query = $GLOBALS['TYPO3_DB']->INSERTquery('tx_hellurl_errorlog', $fields_values);
@@ -1768,12 +1768,12 @@ class UrlRewritingHook implements SingletonInterface
                 list($error_row) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('counter', 'tx_hellurl_errorlog', $cond);
                 if (count($error_row)) {
                     /** @noinspection PhpUndefinedMethodInspection */
-                    $fields_values = [
+                    $fields_values = array(
                         'error' => $msg,
                         'counter' => $error_row['counter'] + 1,
                         'tstamp' => time(),
                         'last_referer' => GeneralUtility::getIndpEnv('HTTP_REFERER'),
-                    ];
+                    );
                     /** @noinspection PhpUndefinedMethodInspection */
                     $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_errorlog', $cond, $fields_values);
                 } else {
@@ -1851,14 +1851,14 @@ class UrlRewritingHook implements SingletonInterface
                     $rootpage_id = intval($cachedInfo['rootpage_id']);
                     $hash = md5($speakingURIpath . $rootpage_id);
 
-                    $insertFields = [
+                    $insertFields = array(
                         'url_hash' => $hash,
                         'spurl' => $speakingURIpath,
                         'content' => serialize($cachedInfo),
                         'page_id' => $cachedInfo['id'],
                         'rootpage_id' => $rootpage_id,
                         'tstamp' => time(),
-                    ];
+                    );
                     if ($this->useMySQLExtendedSyntax) {
                         /** @noinspection PhpUndefinedMethodInspection */
                         $query = $GLOBALS['TYPO3_DB']->INSERTquery('tx_hellurl_urldecodecache', $insertFields);
@@ -1972,7 +1972,7 @@ class UrlRewritingHook implements SingletonInterface
     {
         // Assemble list of fields to look up. This includes localization related fields
         $langEnabled = false;
-        $fieldList = [];
+        $fieldList = array();
         if ($cfg['languageGetVar'] && $cfg['transOrigPointerField'] && $cfg['languageField']) {
             $fieldList[] = 'uid';
             $fieldList[] = $cfg['transOrigPointerField'];
@@ -2180,7 +2180,7 @@ class UrlRewritingHook implements SingletonInterface
         }
 
         // Insert the new id<->alias relation
-        $insertArray = [
+        $insertArray = array(
             'tstamp' => time(),
             'tablename' => $cfg['table'],
             'field_alias' => $cfg['alias_field'],
@@ -2188,7 +2188,7 @@ class UrlRewritingHook implements SingletonInterface
             'value_alias' => $uniqueAlias,
             'value_id' => $idValue,
             'lang' => $lang,
-        ];
+        );
 
         // Checking that this alias hasn't been stored since we looked last time
         $returnAlias = $this->lookUp_idToUniqAlias($cfg, $idValue, $lang, $uniqueAlias);
@@ -2204,7 +2204,7 @@ class UrlRewritingHook implements SingletonInterface
                     AND field_id=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($cfg['id_field'], 'tx_hellurl_uniqalias') . '
                     AND tablename=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($cfg['table'], 'tx_hellurl_uniqalias') . '
                     AND lang=' . intval($lang) . '
-                    AND expire=0', ['expire' => time() + 24 * 3600 * ($cfg['expireDays'] ? $cfg['expireDays'] : 60)]);
+                    AND expire=0', array('expire' => time() + 24 * 3600 * ($cfg['expireDays'] ? $cfg['expireDays'] : 60)));
 
             // Store new alias
             /** @noinspection PhpUndefinedMethodInspection */
@@ -2257,16 +2257,16 @@ class UrlRewritingHook implements SingletonInterface
         $processedTitle = trim($processedTitle, $space);
 
         if ($cfg['useUniqueCache_conf']['encodeTitle_userProc']) {
-            $encodingConfiguration = [
+            $encodingConfiguration = array(
                 'strtolower' => $cfg['useUniqueCache_conf']['strtolower'],
                 'spaceCharacter' => $cfg['useUniqueCache_conf']['spaceCharacter'],
-            ];
-            $params = [
+            );
+            $params = array(
                 'pObj' => &$this,
                 'title' => $newAliasValue,
                 'processedTitle' => $processedTitle,
                 'encodingConfiguration' => $encodingConfiguration,
-            ];
+            );
             $processedTitle = GeneralUtility::callUserFunction($cfg['useUniqueCache_conf']['encodeTitle_userProc'], $params, $this);
         }
 
@@ -2300,7 +2300,7 @@ class UrlRewritingHook implements SingletonInterface
             if (is_array($testConf)) {
                 unset($testConf['getHost']);
             } else {
-                $testConf = [];
+                $testConf = array();
             }
 
             /** @noinspection PhpIncludeInspection */
@@ -2363,9 +2363,9 @@ class UrlRewritingHook implements SingletonInterface
 
         if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl']['getHost'])) {
             foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl']['getHost'] as $userFunc) {
-                $hookParams = [
+                $hookParams = array(
                     'host' => $host,
-                ];
+                );
                 $newHost = GeneralUtility::callUserFunction($userFunc, $hookParams, $this);
                 if (!empty($newHost) && is_string($newHost)) {
                     $host = $newHost;
@@ -2400,7 +2400,7 @@ class UrlRewritingHook implements SingletonInterface
         }
 
         $cfg = is_array($this->extConf[$mainCat][$pageId]) ? $this->extConf[$mainCat][$pageId] :
-            (is_array($this->extConf[$mainCat]['_DEFAULT']) ? $this->extConf[$mainCat]['_DEFAULT'] : []);
+            (is_array($this->extConf[$mainCat]['_DEFAULT']) ? $this->extConf[$mainCat]['_DEFAULT'] : array());
         return $cfg;
     }
 
@@ -2493,7 +2493,7 @@ class UrlRewritingHook implements SingletonInterface
     {
         $result = false;
 
-        $this->additionalParametersForChash = [];
+        $this->additionalParametersForChash = array();
 
         if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl']['_DOMAINS'])) {
             $configuration = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl']['_DOMAINS'];
@@ -2523,7 +2523,7 @@ class UrlRewritingHook implements SingletonInterface
         $this->ignoreGETvar = '';
         if (is_array($params) && isset($params['LD']['totalURL']) && is_array($configuration)) {
             $urlParts = parse_url($params['LD']['totalURL']);
-            $urlParams = [];
+            $urlParams = array();
             parse_str($urlParts['query'], $urlParams);
 
             foreach ($configuration as $disposal) {
@@ -2605,7 +2605,7 @@ class UrlRewritingHook implements SingletonInterface
     protected function setConfigurationByReference($useConfiguration)
     {
         $extConf = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl'];
-        $resolved = [];
+        $resolved = array();
         $result = false;
 
         // Resolve configurations references and avoid endless loops
@@ -2663,7 +2663,7 @@ class UrlRewritingHook implements SingletonInterface
         if (!$this->enableStrictMode) {
             // Search by host
 
-            $testedDomains = [$host => 1];
+            $testedDomains = array($host => 1);
             do {
                 /** @noinspection PhpUndefinedMethodInspection */
                 $domain = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('pid,redirectTo,domainName', 'sys_domain',
@@ -2672,10 +2672,10 @@ class UrlRewritingHook implements SingletonInterface
                 if (count($domain) > 0) {
                     if (!$domain[0]['redirectTo']) {
                         $rootpage_id = intval($domain[0]['pid']);
-                        $this->devLog('Found rootpage_id by domain lookup', [
+                        $this->devLog('Found rootpage_id by domain lookup', array(
                             'domain' => $domain[0]['domainName'],
                             'rootpage_id' => $rootpage_id,
-                        ]);
+                        ));
                         break;
                     } else {
                         $parts = @parse_url($domain[0]['redirectTo']);
@@ -2703,7 +2703,7 @@ class UrlRewritingHook implements SingletonInterface
                     'sys_template', 'root=1 AND hidden=0 AND deleted=0');
                 if (count($rows) == 1) {
                     $rootpage_id = $rows[0]['pid'];
-                    $this->devLog('Found rootpage_id by searching sys_template', ['rootpage_id' => $rootpage_id]);
+                    $this->devLog('Found rootpage_id by searching sys_template', array('rootpage_id' => $rootpage_id));
                 }
             }
         }

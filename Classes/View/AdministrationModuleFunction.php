@@ -54,7 +54,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * @var array
      */
-    protected $iconMapping = [
+    protected $iconMapping = array(
         'gfx/zoom.gif' => 'actions-search',
         'gfx/edit2.gif' => 'actions-open',
         'gfx/garbage.gif' => 'actions-delete',
@@ -62,7 +62,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         'gfx/clip_copy.gif' => 'actions-edit-copy',
         'gfx/up.gif' => 'actions-move-up',
         'gfx/new_el.gif' => 'actions-document-new',
-    ];
+    );
 
     /**
      *
@@ -79,15 +79,15 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      */
     public function modMenu()
     {
-        $modMenu = [
-            'depth' => [
+        $modMenu = array(
+            'depth' => array(
                 0 => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.depth_0'),
                 1 => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.depth_1'),
                 2 => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.depth_2'),
                 3 => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.depth_3'),
                 99 => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.depth_infi'),
-            ],
-            'type' => [
+            ),
+            'type' => array(
                 'pathcache' => 'ID-to-path mapping',
                 'decode' => 'Decode cache',
                 'encode' => 'Encode cache',
@@ -95,8 +95,8 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 'redirects' => 'Redirects',
                 'config' => 'Configuration',
                 'log' => 'Error Log',
-            ],
-        ];
+            ),
+        );
 
         $modMenu['type'] = \TYPO3\CMS\Backend\Utility\BackendUtility::unsetMenuItems($this->pObj->modTSconfig['properties'], $modMenu['type'], 'menu.hellurl_type');
 
@@ -227,10 +227,10 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         \TYPO3\CMS\Backend\Utility\BackendUtility::workspaceOL('pages', $treeStartingRecord);
 
         // Creating top icon; the current page
-        $tree->tree[] = [
+        $tree->tree[] = array(
             'row' => $treeStartingRecord,
             'HTML' => $tree->getIcon($treeStartingRecord),
-        ];
+        );
 
         // Create the tree from starting point:
         if ($this->pObj->MOD_SETTINGS['depth'] > 0) {
@@ -262,7 +262,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $searchForm_replace = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST('_replace');
         $searchForm_delete = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST('_delete');
 
-        $trackSameUrl = [];
+        $trackSameUrl = array();
         $this->searchResultCounter = 0;
 
         // Traverse tree:
@@ -281,7 +281,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             if (!count($pathCacheInfo)) {
 
                 // Add title:
-                $tCells = [];
+                $tCells = array();
                 $tCells[] = '<td nowrap="nowrap"' . $cellAttrib . '>' . $rowTitle . '</td>';
 
                 // Empty row:
@@ -302,7 +302,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                     $hash = $inf['pagepath'] . '|' . $inf['rootpage_id'] . '|' . $inf['language_id'];    // MP is not a part of this because the path itself should be different simply because the MP makes a different path! (see UriGeneratorAndResolver::pagePathtoID())
 
                     // Add icon/title and ID:
-                    $tCells = [];
+                    $tCells = array();
                     if (!$c) {
                         $tCells[] = '<td nowrap="nowrap" rowspan="' . count($pathCacheInfo) . '"' . $cellAttrib . '>' . $rowTitle . '</td>';
                         $tCells[] = '<td rowspan="' . count($pathCacheInfo) . '">' . $inf['page_id'] . '</td>';
@@ -333,18 +333,18 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                                 $this->getIcon('gfx/zoom.gif', 'width="12" height="12"', $this->pObj->doc->backPath) .
                                 '</a>';
                         } else {
-                            $baseRow = [];
+                            $baseRow = array();
                         }
                     }
                     $tCells[] = '<td>' . $editIcon . '</td>';
 
                     // 	Sources for segment:
-                    $sources = count($baseRow) ? implode(' | ', [
+                    $sources = count($baseRow) ? implode(' | ', array(
                         $baseRow['tx_hellurl_pathsegment'],
                         $baseRow['alias'],
                         $baseRow['nav_title'],
                         $baseRow['title'],
-                    ]) : '';
+                    )) : '';
                     $tCells[] = '<td nowrap="nowrap">' . htmlspecialchars($sources) . '</td>';
 
                     // Show page path:
@@ -447,7 +447,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         }
 
         // Create header:
-        $tCells = [];
+        $tCells = array();
         $tCells[] = '<td>Title:</td>';
         $tCells[] = '<td>ID:</td>';
         $tCells[] = '<td>&nbsp;</td>';
@@ -512,7 +512,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         );
 
         // Traverse result:
-        $output = [];
+        $output = array();
         while (false != ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
 
             // Delete entries:
@@ -547,10 +547,10 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     {
         return htmlspecialchars(BackendUtility::getModuleUrl(
                 'web_info',
-                [
+                array(
                     'id' => $this->pObj->id,
                     'showLanguage' => \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('showLanguage'),
-                ]
+                )
             ) . $parameters);
     }
 
@@ -614,7 +614,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     {
         $languages = $this->getSystemLanguages();
 
-        $options = [];
+        $options = array();
         $showLanguage = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('showLanguage');
         foreach ($languages as $language) {
             $selected = $showLanguage === $language['uid'] ? ' selected="selected"' : '';
@@ -637,8 +637,8 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 
         $defaultLanguageLabel = $this->getDefaultLanguageName();
 
-        array_unshift($languages, ['uid' => 0, 'title' => $defaultLanguageLabel]);
-        array_unshift($languages, ['uid' => '', 'title' => $GLOBALS['LANG']->getLL('all_languages')]);
+        array_unshift($languages, array('uid' => 0, 'title' => $defaultLanguageLabel));
+        array_unshift($languages, array('uid' => '', 'title' => $GLOBALS['LANG']->getLL('all_languages')));
 
         return $languages;
     }
@@ -681,7 +681,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     public function raiseExpirePathCacheEntry(&$row)
     {
         $row['expire'] = time() + 30 * 24 * 3600;
-        $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_pathcache', 'expire>0 AND cache_id=' . intval($row['cache_id']), ['expire' => $row['expire']]);
+        $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_pathcache', 'expire>0 AND cache_id=' . intval($row['cache_id']), array('expire' => $row['expire']));
     }
 
     /**
@@ -703,9 +703,9 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         // Update the old record with expire time:
         if (!$oEntry['expire']) {
             $oEntry['expire'] = time() + 30 * 24 * 3600;
-            $field_values = [
+            $field_values = array(
                 'expire' => $oEntry['expire'],
-            ];
+            );
             $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_pathcache', 'cache_id=' . intval($oEntry['cache_id']), $field_values);
         }
 
@@ -722,9 +722,9 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      */
     public function editPathCacheEntry($cache_id, $value)
     {
-        $field_values = [
+        $field_values = array(
             'pagepath' => $value,
-        ];
+        );
         $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_pathcache', 'cache_id=' . intval($cache_id), $field_values);
 
         // Look up the page id so we can clear the encodeCache entries:
@@ -804,7 +804,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             if (!count($displayRows) || $subcmd === 'displayed') {
 
                 // Add title:
-                $tCells = [];
+                $tCells = array();
                 $tCells[] = '<td nowrap="nowrap">' . $rowTitle . '</td>';
 
                 // Empty row:
@@ -827,7 +827,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 foreach ($displayRows as $c => $inf) {
 
                     // Add icon/title and ID:
-                    $tCells = [];
+                    $tCells = array();
                     if (!$c) {
                         $tCells[] = '<td nowrap="nowrap" rowspan="' . count($displayRows) . '">' . $rowTitle . '</td>';
                         $tCells[] = '<td nowrap="nowrap" rowspan="' . count($displayRows) . '">' . $row['row']['uid'] . '</td>';
@@ -872,7 +872,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         list($count_allInTable) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('count(*) AS count', 'tx_hellurl_urldecodecache', '');
 
         // Create header:
-        $tCells = [];
+        $tCells = array();
         $tCells[] = '<td>Title:</td>';
         $tCells[] = '<td>ID:</td>';
         $tCells[] = '<td>&nbsp;</td>';
@@ -933,7 +933,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $cc = 0;
         $countDisplayed = 0;
         $output = '';
-        $duplicates = [];
+        $duplicates = array();
 
         foreach ($tree->tree as $row) {
 
@@ -947,7 +947,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             if (!count($displayRows) || $subcmd === 'displayed') {
 
                 // Add title:
-                $tCells = [];
+                $tCells = array();
                 $tCells[] = '<td nowrap="nowrap">' . $rowTitle . '</td>';
                 $tCells[] = '<td nowrap="nowrap">&nbsp;</td>';
 
@@ -970,7 +970,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             } else {
                 foreach ($displayRows as $c => $inf) {
                     // Add icon/title and ID:
-                    $tCells = [];
+                    $tCells = array();
                     if (!$c) {
                         $tCells[] = '<td nowrap="nowrap" rowspan="' . count($displayRows) . '">' . $rowTitle . '</td>';
                         $tCells[] = '<td nowrap="nowrap" rowspan="' . count($displayRows) . '">' . $row['row']['uid'] . '</td>';
@@ -1027,7 +1027,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         list($count_allInTable) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('count(*) AS count', 'tx_hellurl_urlencodecache', '');
 
         // Create header:
-        $tCells = [];
+        $tCells = array();
         $tCells[] = '<td>Title:</td>';
         $tCells[] = '<td>ID:</td>';
         $tCells[] = '<td>&nbsp;</td>';
@@ -1136,10 +1136,10 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 
             $cc = 0;
             $field_id = $field_alias = $output = '';
-            $duplicates = [];
+            $duplicates = array();
             foreach ($tableContent as $aliasRecord) {
                 // Add data:
-                $tCells = [];
+                $tCells = array();
                 $tCells[] = '<td>' . htmlspecialchars($aliasRecord['value_id']) . '</td>';
 
                 if ((string)$cmd === 'edit' && ($entry === 'ALL' || !strcmp($entry, $aliasRecord['uid']))) {
@@ -1185,7 +1185,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             }
 
             // Create header:
-            $tCells = [];
+            $tCells = array();
             $tCells[] = '<td>ID (Field: ' . $field_id . ')</td>';
             $tCells[] = '<td>Alias (Field: ' . $field_alias . '):</td>';
             $tCells[] = '<td>Lang:</td>';
@@ -1232,7 +1232,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 foreach ($overviewRows as $aliasRecord) {
 
                     // Add data:
-                    $tCells = [];
+                    $tCells = array();
                     $tCells[] = '<td><a href="' . $this->linkSelf('&table=' . rawurlencode($aliasRecord['tablename'])) . '">' . $aliasRecord['tablename'] . '</a></td>';
                     $tCells[] = '<td>' . $aliasRecord['number_of_rows'] . '</td>';
 
@@ -1246,7 +1246,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 }
 
                 // Create header:
-                $tCells = [];
+                $tCells = array();
                 $tCells[] = '<td>Table:</td>';
                 $tCells[] = '<td>Aliases:</td>';
 
@@ -1276,9 +1276,9 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      */
     public function editUniqAliasEntry($cache_id, $value)
     {
-        $field_values = [
+        $field_values = array(
             'value_alias' => $value,
-        ];
+        );
         $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_uniqalias', 'uid=' . intval($cache_id), $field_values);
     }
 
@@ -1374,7 +1374,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 }
 
                 // Add data:
-                $tCells = [];
+                $tCells = array();
                 $tCells[] = '<td>' . $rec['counter'] . '</td>';
                 $tCells[] = '<td>' . \TYPO3\CMS\Backend\Utility\BackendUtility::dateTimeAge($rec['tstamp']) . '</td>';
                 $tCells[] = '<td><a href="' . htmlspecialchars($host . '/' . $rec['url']) . '" target="_blank">' . ($host ? $host . '/' : '') . htmlspecialchars($rec['url']) . '</a>' .
@@ -1397,7 +1397,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 $cc++;
             }
             // Create header:
-            $tCells = [];
+            $tCells = array();
             $tCells[] = '<td>Counter:</td>';
             $tCells[] = '<td>Last time:</td>';
             $tCells[] = '<td>URL:</td>';
@@ -1673,9 +1673,9 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                     $sortingDirection = '';
                 }
             }
-            $_SESSION['hellurl']['redirects_view']['sorting'] = [$sortingParameter, $sortingDirection];
+            $_SESSION['hellurl']['redirects_view']['sorting'] = array($sortingParameter, $sortingDirection);
         } elseif (!isset($_SESSION['hellurl']['redirects_view']['sorting'])) {
-            $_SESSION['hellurl']['redirects_view']['sorting'] = ['url', 'ASC'];
+            $_SESSION['hellurl']['redirects_view']['sorting'] = array('url', 'ASC');
         }
 
         return $_SESSION['hellurl']['redirects_view']['sorting'];
@@ -1813,7 +1813,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $data = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('data');
         $max = count($data);
         if (!is_array($data)) {
-            $data = [];
+            $data = array();
             $max = 10;
         }
         for ($i = 0; $i < $max; $i++) {
@@ -1873,8 +1873,8 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $error = '';
         if (\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('_edit_save')) {
             $data = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('data');
-            $databaseUpdateData = [];
-            $databaseInsertData = [];
+            $databaseUpdateData = array();
+            $databaseInsertData = array();
             foreach ($data as $fields) {
                 //
                 // Validate
@@ -1911,22 +1911,22 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 // Process
                 if ($fields['url_hash'] == '') {
                     // New entry
-                    $databaseInsertData[] = [
+                    $databaseInsertData[] = array(
                         'url_hash' => \TYPO3\CMS\Core\Utility\GeneralUtility::md5int($fields['source']),
                         'url' => $fields['source'],
                         'destination' => $fields['target'],
                         'has_moved' => $fields['permanent'] ? 1 : 0,
                         'domain_limit' => intval($fields['domain_limit']),
-                    ];
+                    );
                 } else {
                     // Existing entry
-                    $databaseUpdateData[$fields['uid']] = [
+                    $databaseUpdateData[$fields['uid']] = array(
                         'url_hash' => \TYPO3\CMS\Core\Utility\GeneralUtility::md5int($fields['source']),
                         'url' => $fields['source'],
                         'destination' => $fields['target'],
                         'has_moved' => $fields['permanent'] ? 1 : 0,
                         'domain_limit' => intval($fields['domain_limit']),
-                    ];
+                    );
                 }
             }
             // Add/update data

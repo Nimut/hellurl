@@ -124,12 +124,12 @@ class PageBrowserViewHelper
     {
         $extraClass = '';
         if ($pageNumber != $this->currentPage) {
-            $link = [
+            $link = array(
                 '<a href="' . $this->baseURL . '&amp;page=' . $pageNumber . '">',
                 '</a>',
-            ];
+            );
         } else {
-            $link = ['', ''];
+            $link = array('', '');
             $extraClass = ' bgColor-20';
         }
 

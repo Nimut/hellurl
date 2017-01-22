@@ -217,7 +217,7 @@ class UriGeneratorAndResolver implements SingletonInterface
 
             if (!$this->conf['dontResolveShortcuts'] && $page['doktype'] == 4) {
                 // Shortcut
-                $pageId = $this->resolveShortcut($page, $disableGroupAccessCheck, [], $mpvar);
+                $pageId = $this->resolveShortcut($page, $disableGroupAccessCheck, array(), $mpvar);
             } else {
                 $pageId = $page['uid'];
                 break;
@@ -323,7 +323,7 @@ class UriGeneratorAndResolver implements SingletonInterface
      */
     protected function getPagePathRec($id, $mpvar, $lang)
     {
-        static $IDtoPagePathCache = [];
+        static $IDtoPagePathCache = array();
 
         $cacheKey = $id . '.' . $mpvar . '.' . $lang;
         if (isset($IDtoPagePathCache[$cacheKey])) {
@@ -357,13 +357,13 @@ class UriGeneratorAndResolver implements SingletonInterface
         $page = $this->getPage($id, $lang);
         if ($page['tx_hellurl_pathoverride']) {
             if ($page['tx_hellurl_pathsegment']) {
-                $result = [
+                $result = array(
                     'pagepath' => trim($page['tx_hellurl_pathsegment'], '/'),
                     'langID' => intval($lang),
                     // TODO Might be better to fetch root line here to process mount
                     // points and inner subdomains correctly.
                     'rootpage_id' => intval($this->conf['rootpage_id']),
-                ];
+                );
             } else {
                 $message = sprintf('Path override is set for page=%d (language=%d) but no segment defined!',
                     $id, $lang);
@@ -424,21 +424,21 @@ class UriGeneratorAndResolver implements SingletonInterface
             'tx_hellurl_pathcache', $revitalizationCondition);
         if ($revitalizationCount['t'] > 0) {
             /** @noinspection PhpUndefinedMethodInspection */
-            $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_pathcache', $revitalizationCondition, ['expire' => 0]);
+            $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_pathcache', $revitalizationCondition, array('expire' => 0));
         } else {
             $createCondition = $condition . ' AND expire=0';
             /** @noinspection PhpUndefinedMethodInspection */
             list($createCount) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('COUNT(*) AS t',
                 'tx_hellurl_pathcache', $createCondition);
             if ($createCount['t'] == 0) {
-                $insertArray = [
+                $insertArray = array(
                     'page_id' => $pageId,
                     'language_id' => $langId,
                     'pagepath' => $currentPagePath,
                     'expire' => 0,
                     'rootpage_id' => $rootPageId,
                     'mpvar' => $mpvar,
-                ];
+                );
                 /** @noinspection PhpUndefinedMethodInspection */
                 $GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_hellurl_pathcache', $insertArray);
             }
@@ -461,9 +461,9 @@ class UriGeneratorAndResolver implements SingletonInterface
             $GLOBALS['TYPO3_DB']->fullQuoteStr($currentPagePath, 'tx_hellurl_pathcache');
         /** @noinspection PhpUndefinedMethodInspection */
         $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_pathcache', $condition,
-            [
+            array(
                 'expire' => $this->makeExpirationTime($expireDays),
-            ],
+            ),
             'expire'
         );
     }
@@ -509,7 +509,7 @@ class UriGeneratorAndResolver implements SingletonInterface
         $this->sysPage->sys_language_uid = $langID;
         $rootLine = $this->sysPage->getRootLine($id, $mpvar);
         $numberOfRootlineEntries = count($rootLine);
-        $newRootLine = [];
+        $newRootLine = array();
         $rootFound = false;
         if (!$GLOBALS['TSFE']->tmpl->rootLine) {
             $GLOBALS['TSFE']->tmpl->start($GLOBALS['TSFE']->rootLine);
@@ -532,7 +532,7 @@ class UriGeneratorAndResolver implements SingletonInterface
             $this->pObj->devLog('Starting to walk rootline for id=' . $id . ' from index=' . $i, $rootLine);
             for ($i = 0; $i < $numberOfRootlineEntries; $i++) {
                 if ($GLOBALS['TSFE']->tmpl->rootLine[0]['uid'] == $rootLine[$i]['uid']) {
-                    $this->pObj->devLog('Found rootline', ['uid' => $id, 'rootline start pid' => $rootLine[$i]['uid']]);
+                    $this->pObj->devLog('Found rootline', array('uid' => $id, 'rootline start pid' => $rootLine[$i]['uid']));
                     $rootFound = true;
                     for (; $i < $numberOfRootlineEntries; $i++) {
                         $newRootLine[] = $rootLine[$i];
@@ -544,7 +544,7 @@ class UriGeneratorAndResolver implements SingletonInterface
         if ($rootFound) {
             // Translate the rootline to a valid path (rootline contains localized titles at this point!)
             $pagePath = $this->rootLineToPath($newRootLine, $langID);
-            $this->pObj->devLog('Got page path', ['uid' => $id, 'pagepath' => $pagePath]);
+            $this->pObj->devLog('Got page path', array('uid' => $id, 'pagepath' => $pagePath));
             $rootPageId = $this->conf['rootpage_id'];
             if ($innerSubDomain) {
                 $parts = parse_url($pagePath);
@@ -561,11 +561,11 @@ class UriGeneratorAndResolver implements SingletonInterface
                     }
                 }
             }
-            $result = [
+            $result = array(
                 'pagepath' => $pagePath,
                 'langID' => intval($langID),
                 'rootpage_id' => intval($rootPageId),
-            ];
+            );
         }
 
         return $result;
@@ -587,11 +587,11 @@ class UriGeneratorAndResolver implements SingletonInterface
      */
     protected function rootLineToPath($rl, $lang)
     {
-        $paths = [];
+        $paths = array();
         array_shift($rl); // Ignore the first path, as this is the root of the website
         $c = count($rl);
         $stopUsingCache = false;
-        $this->pObj->devLog('rootLineToPath starts searching', ['rootline size' => count($rl)]);
+        $this->pObj->devLog('rootLineToPath starts searching', array('rootline size' => count($rl)));
         for ($i = 1; $i <= $c; $i++) {
             $page = array_shift($rl);
 
@@ -624,7 +624,7 @@ class UriGeneratorAndResolver implements SingletonInterface
 
             // If a cached path was found for the page it will be inserted as the base of the new path, overriding anything build prior to this
             if ($cachedPagePath) {
-                $paths = [];
+                $paths = array();
                 $paths[$i] = $cachedPagePath['pagepath'];
             } else {
                 // Building up the path from page title etc.
@@ -664,7 +664,7 @@ class UriGeneratorAndResolver implements SingletonInterface
     protected function pagePathtoID(&$pathParts)
     {
         $row = $postVar = false;
-        $copy_pathParts = [];
+        $copy_pathParts = array();
 
         // If pagePath cache is not disabled, look for entry
         if (!$this->conf['disablePathCache']) {
@@ -769,14 +769,14 @@ class UriGeneratorAndResolver implements SingletonInterface
 
             // Assume we can use this info at first
             $id = $row['page_id'];
-            $GET_VARS = $row['mpvar'] ? ['MP' => $row['mpvar']] : '';
+            $GET_VARS = $row['mpvar'] ? array('MP' => $row['mpvar']) : '';
         } else {
             // Find it
             list($id, $GET_VARS) = $this->findIDByURL($pathParts);
         }
 
         // Return found ID
-        return [$id, $GET_VARS];
+        return array($id, $GET_VARS);
     }
 
     /**
@@ -798,11 +798,11 @@ class UriGeneratorAndResolver implements SingletonInterface
             }
             list($id, $mpvar) = $this->findIDBySegment($startPid, '', $urlParts);
             if ($mpvar) {
-                $GET_VARS = ['MP' => $mpvar];
+                $GET_VARS = array('MP' => $mpvar);
             }
         }
 
-        return [intval($id ?: $startPid), $GET_VARS];
+        return array(intval($id ?: $startPid), $GET_VARS);
     }
 
     /**
@@ -831,8 +831,8 @@ class UriGeneratorAndResolver implements SingletonInterface
      */
     protected function findIDByPathOverride($rootPid, array &$urlParts)
     {
-        $pageInfo = [0, ''];
-        $extraUrlSegments = [];
+        $pageInfo = array(0, '');
+        $extraUrlSegments = array();
         while (count($urlParts) > 0) {
             // Search for the path inside the root page
             $url = implode('/', $urlParts);
@@ -864,7 +864,7 @@ class UriGeneratorAndResolver implements SingletonInterface
             }
         }
         if (count($pages) > 1) {
-            $idList = [];
+            $idList = array();
             foreach ($pages as $page) {
                 $idList[] = $page['uid'];
             }
@@ -875,7 +875,7 @@ class UriGeneratorAndResolver implements SingletonInterface
         }
         reset($pages);
         $page = current($pages);
-        return [$page['uid'], ''];
+        return array($page['uid'], '');
     }
 
     /**
@@ -909,7 +909,7 @@ class UriGeneratorAndResolver implements SingletonInterface
      */
     protected function fetchPagesForPath($url)
     {
-        $pages = [];
+        $pages = array();
         $language = intval($this->pObj->getDetectedLanguage());
         if ($language > 0) {
             /** @noinspection PhpUndefinedMethodInspection */
@@ -960,7 +960,7 @@ class UriGeneratorAndResolver implements SingletonInterface
 
         // Creating currentIdMp variable if not set
         if (!is_array($currentIdMp)) {
-            $currentIdMp = [$startPid, $mpvar, $foundUID];
+            $currentIdMp = array($startPid, $mpvar, $foundUID);
         }
 
         // No more urlparts? Return what we have.
@@ -1020,7 +1020,7 @@ class UriGeneratorAndResolver implements SingletonInterface
     {
         $uid = $row['uid'];
         // Set base currentIdMp for next level
-        $currentIdMp = [$uid, $mpvar, $foundUID];
+        $currentIdMp = array($uid, $mpvar, $foundUID);
 
         // Modify values if it was a mount point
         if (is_array($row['_IS_MOUNTPOINT'])) {
@@ -1060,9 +1060,9 @@ class UriGeneratorAndResolver implements SingletonInterface
         // Build an array with encoded values from the segTitleFieldArray of the subpages
         // First we find field values from the default language
         // Pages are selected in menu order and if duplicate titles are found the first takes precedence!
-        $titles = []; // array(title => uid);
-        $exclude = [];
-        $uidTrack = [];
+        $titles = array(); // array(title => uid);
+        $exclude = array();
+        $uidTrack = array();
         /** @noinspection PhpUndefinedMethodInspection */
         $result = $GLOBALS['TYPO3_DB']->exec_SELECTquery($selList, 'pages',
             'pid=' . intval($searchPid) .
@@ -1141,7 +1141,7 @@ class UriGeneratorAndResolver implements SingletonInterface
 
         // Merge titles
         $segTitleFieldArray = array_reverse($segTitleFieldArray); // To observe the priority order...
-        $allTitles = [];
+        $allTitles = array();
         foreach ($segTitleFieldArray as $fieldName) {
             if (is_array($titles[$fieldName])) {
                 $allTitles = $titles[$fieldName] + $allTitles;
@@ -1150,14 +1150,14 @@ class UriGeneratorAndResolver implements SingletonInterface
 
         // Return
         $encodedTitle = $this->encodeTitle($title);
-        $possibleMatch = [];
+        $possibleMatch = array();
         if (isset($allTitles[$encodedTitle])) {
             if (!$uidTrack[$allTitles[$encodedTitle]]['tx_hellurl_exclude']) {
-                return [$allTitles[$encodedTitle], $uidTrack[$allTitles[$encodedTitle]], false, []];
+                return array($allTitles[$encodedTitle], $uidTrack[$allTitles[$encodedTitle]], false, array());
             }
             $possibleMatch = $uidTrack[$allTitles[$encodedTitle]];
         }
-        return [false, false, $exclude, $possibleMatch];
+        return array(false, false, $exclude, $possibleMatch);
     }
 
     /*******************************
@@ -1210,13 +1210,13 @@ class UriGeneratorAndResolver implements SingletonInterface
         $processedTitle = trim($processedTitle, $space);
 
         if ($this->conf['encodeTitle_userProc']) {
-            $encodingConfiguration = ['strtolower' => true, 'spaceCharacter' => $this->conf['spaceCharacter']];
-            $params = [
+            $encodingConfiguration = array('strtolower' => true, 'spaceCharacter' => $this->conf['spaceCharacter']);
+            $params = array(
                 'pObj' => &$this,
                 'title' => $title,
                 'processedTitle' => $processedTitle,
                 'encodingConfiguration' => $encodingConfiguration,
-            ];
+            );
             $processedTitle = GeneralUtility::callUserFunction($this->conf['encodeTitle_userProc'], $params, $this);
         }
 
@@ -1281,7 +1281,7 @@ class UriGeneratorAndResolver implements SingletonInterface
      *
      * @return int Found page id
      */
-    protected function resolveShortcut($page, $disableGroupAccessCheck, $log = [], &$mpvar = null)
+    protected function resolveShortcut($page, $disableGroupAccessCheck, $log = array(), &$mpvar = null)
     {
         if (isset($log[$page['uid']])) {
             // loop detected!

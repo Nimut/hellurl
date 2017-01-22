@@ -96,7 +96,7 @@ class ConfigurationGenerator
 
         $this->hasStaticInfoTables = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('static_info_tables');
 
-        $conf = [];
+        $conf = array();
         $template = $this->getTemplate();
 
         // Find all domains
@@ -132,9 +132,9 @@ class ConfigurationGenerator
         // Post process generated configuration
         if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/hellurl/class.tx_hellurl_autoconfgen.php']['postProcessConfiguration'])) {
             foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/hellurl/class.tx_hellurl_autoconfgen.php']['postProcessConfiguration'] as $userFunc) {
-                $parameters = [
+                $parameters = array(
                     'config' => &$conf,
-                ];
+                );
                 \TYPO3\CMS\Core\Utility\GeneralUtility::callUserFunction($userFunc, $parameters, $this);
             }
         }
@@ -151,34 +151,34 @@ class ConfigurationGenerator
      */
     protected function getTemplate()
     {
-        $confTemplate = [
-            'init' => [
+        $confTemplate = array(
+            'init' => array(
                 'enableCHashCache' => true,
                 'appendMissingSlash' => 'ifNotFile,redirect',
                 'adminJumpToBackend' => true,
                 'enableUrlDecodeCache' => true,
                 'enableUrlEncodeCache' => true,
                 'emptyUrlReturnValue' => \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('TYPO3_SITE_PATH'),
-            ],
-            'pagePath' => [
+            ),
+            'pagePath' => array(
                 'type' => 'user',
                 'userFunc' => 'Nimut\\Hellurl\\UriGeneratorAndResolver->main',
                 'spaceCharacter' => '-',
                 'languageGetVar' => 'L',
-            ],
-            'fileName' => [
+            ),
+            'fileName' => array(
                 'defaultToHTMLsuffixOnPrev' => 0,
                 'acceptHTMLsuffix' => 1,
-            ],
-        ];
+            ),
+        );
 
         // Add print feature if TemplaVoila is not loaded
         if (!\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('templavoila')) {
-            $confTemplate['fileName']['index']['print'] = [
-                'keyValues' => [
+            $confTemplate['fileName']['index']['print'] = array(
+                'keyValues' => array(
                     'type' => 98,
-                ],
-            ];
+                ),
+            );
         }
 
         // Add respectSimulateStaticURLs if SimulateStatic is loaded
@@ -191,10 +191,10 @@ class ConfigurationGenerator
         // Add from extensions
         if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/hellurl/class.tx_hellurl_autoconfgen.php']['extensionConfiguration'])) {
             foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/hellurl/class.tx_hellurl_autoconfgen.php']['extensionConfiguration'] as $extKey => $userFunc) {
-                $params = [
+                $params = array(
                     'config' => $confTemplate,
                     'extKey' => $extKey,
-                ];
+                );
                 $var = \TYPO3\CMS\Core\Utility\GeneralUtility::callUserFunction($userFunc, $params, $this);
                 if ($var) {
                     $confTemplate = $var;
@@ -220,14 +220,14 @@ class ConfigurationGenerator
             $languages = $this->databaseConnection->exec_SELECTgetRows('t1.uid AS uid,t1.uid AS lg_iso_2', 'sys_language t1', 't1.hidden=0');
         }
         if (count($languages) > 0) {
-            $conf['preVars'] = [
-                0 => [
+            $conf['preVars'] = array(
+                0 => array(
                     'GETvar' => 'L',
-                    'valueMap' => [
-                    ],
+                    'valueMap' => array(
+                    ),
                     'noMatch' => 'bypass',
-                ],
-            ];
+                ),
+            );
             foreach ($languages as $lang) {
                 $conf['preVars'][0]['valueMap'][strtolower($lang['lg_iso_2'])] = $lang['uid'];
             }

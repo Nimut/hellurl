@@ -150,9 +150,9 @@ class DataHandlerHook implements SingletonInterface
         /** @noinspection PhpUndefinedMethodInspection */
         $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_pathcache',
             'page_id IN (' . implode(',', $pageIds) . ') AND language_id=' . intval($languageId) . ' AND expire=0',
-            [
+            array(
                 'expire' => $expirationTime,
-            ]);
+            ));
     }
 
     /**
@@ -171,9 +171,9 @@ class DataHandlerHook implements SingletonInterface
         /** @noinspection PhpUndefinedMethodInspection */
         $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_hellurl_pathcache',
             'page_id IN (' . implode(',', $pageIds) . ') AND expire=0',
-            [
+            array(
                 'expire' => $expirationTime,
-            ]);
+            ));
     }
 
     /**
@@ -187,7 +187,7 @@ class DataHandlerHook implements SingletonInterface
     {
         $rootLine = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($pageId);
         $rootPageId = $rootLine[1]['uid'];
-        $this->config = [];
+        $this->config = array();
         if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl'])) {
             foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['hellurl'] as $config) {
                 if (is_array($config) && $config['pagePath']['rootpage_id'] == $rootPageId) {
@@ -212,7 +212,7 @@ class DataHandlerHook implements SingletonInterface
      */
     protected function getChildPages($pageId)
     {
-        $children = [];
+        $children = array();
 
         /** @var $tree \TYPO3\CMS\Backend\Tree\View\PageTreeView */
         $tree = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Tree\\View\\PageTreeView');
@@ -252,7 +252,7 @@ class DataHandlerHook implements SingletonInterface
         if ($tableName === 'pages_language_overlay') {
             $result = self::getInfoFromOverlayPid($id);
         } else {
-            $result = [$id, 0];
+            $result = array($id, 0);
         }
         return $result;
     }
@@ -291,7 +291,7 @@ class DataHandlerHook implements SingletonInterface
         /** @noinspection PhpUndefinedMethodInspection */
         list($rec) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('pid,sys_language_uid',
             'pages_language_overlay', 'uid=' . intval($pid));
-        return [$rec['pid'], $rec['sys_language_uid']];
+        return array($rec['pid'], $rec['sys_language_uid']);
     }
 
     /**
@@ -361,7 +361,7 @@ class DataHandlerHook implements SingletonInterface
      */
     public function clearPageRelatedUrlCaches($params)
     {
-        $pageIdArray = $params['table'] === 'pages' ? [$params['uid']] : $params['pageIdArray'];
+        $pageIdArray = $params['table'] === 'pages' ? array($params['uid']) : $params['pageIdArray'];
         if (is_array($pageIdArray) && count($pageIdArray) > 0) {
             /** @noinspection PhpUndefinedMethodInspection */
             $pageIdList = implode(',', $GLOBALS['TYPO3_DB']->cleanIntArray($pageIdArray));
