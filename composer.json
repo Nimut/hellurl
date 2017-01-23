@@ -8,6 +8,10 @@
         "php": ">=5.3.7 <7.2",
         "typo3/cms-core": "^6.2.6 || ^7.6 || >=8.0.0 <8.6"
     },
+    "require-dev": {
+        "php": "~7.0",
+        "phpstan/phpstan": "^0.6"
+    },
     "replace": {
         "hellurl": "self.version",
         "typo3-ter/hellurl": "self.version",
