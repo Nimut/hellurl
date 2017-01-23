@@ -141,9 +141,20 @@ class UrlRewritingHook implements SingletonInterface
      */
     protected $mimeType = null;
 
-    public $enableStrictMode = false;
-
+    /**
+     * @var bool
+     */
     public $enableChashDebug = false;
+
+    /**
+     * @var bool
+     */
+    protected $enableChashUrlDebug = false;
+
+    /**
+     * @var bool
+     */
+    public $enableStrictMode = false;
 
     /**
      * If non-empty, corresponding URL query parameter will be ignored in preVars
