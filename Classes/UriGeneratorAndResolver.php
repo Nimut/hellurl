@@ -173,7 +173,7 @@ class UriGeneratorAndResolver implements SingletonInterface
      */
     protected function isExcludedPage($pageId)
     {
-        return $this->conf['excludePageIds'] && GeneralUtility::inList($this->conf['excludePageIds'], $pageId);
+        return $this->conf['excludePageIds'] && GeneralUtility::inList($this->conf['excludePageIds'], (string)$pageId);
     }
 
     /**
@@ -197,7 +197,7 @@ class UriGeneratorAndResolver implements SingletonInterface
      * Resolves shortcuts if necessary and returns the final destination page id.
      *
      * @param int $pageId
-     * @param array $mpvar
+     * @param string $mpvar
      *
      * @return mixed false if not found or int
      */
@@ -280,8 +280,8 @@ class UriGeneratorAndResolver implements SingletonInterface
      * Adds a new entry to the path cache.
      *
      * @param int $pageId
-     * @param int $cachedPagePath
-     * @param int $pagePath
+     * @param string $cachedPagePath
+     * @param string $pagePath
      * @param int $langId
      * @param int $rootPageId
      * @param string $mpvar
@@ -291,7 +291,7 @@ class UriGeneratorAndResolver implements SingletonInterface
     private function updateURLCache($pageId, $cachedPagePath, $pagePath, $langId, $rootPageId, $mpvar)
     {
         $canCachePaths = !$this->conf['disablePathCache'] && !$this->pObj->isBEUserLoggedIn();
-        $newPathDiffers = ((string)$pagePath !== (string)$cachedPagePath);
+        $newPathDiffers = $pagePath !== $cachedPagePath;
         if ($canCachePaths && $newPathDiffers) {
             /** @noinspection PhpUndefinedMethodInspection */
             $cacheCondition = 'page_id=' . intval($pageId) .
@@ -628,7 +628,7 @@ class UriGeneratorAndResolver implements SingletonInterface
                 // Building up the path from page title etc.
                 if (!$page['tx_hellurl_exclude'] || count($rl) == 0) {
                     // List of "pages" fields to traverse for a "directory title" in the speaking URL (only from RootLine!!)
-                    $segTitleFieldArray = GeneralUtility::trimExplode(',', $this->conf['segTitleFieldList'] ? $this->conf['segTitleFieldList'] : TX_HELLURL_SEGTITLEFIELDLIST_DEFAULT, 1);
+                    $segTitleFieldArray = GeneralUtility::trimExplode(',', $this->conf['segTitleFieldList'] ? $this->conf['segTitleFieldList'] : TX_HELLURL_SEGTITLEFIELDLIST_DEFAULT, true);
                     $theTitle = '';
                     foreach ($segTitleFieldArray as $fieldName) {
                         if (isset($page[$fieldName]) && $page[$fieldName] !== '') {
@@ -1004,7 +1004,7 @@ class UriGeneratorAndResolver implements SingletonInterface
      * when excluded segment is found
      *
      * @param array $row Row to process
-     * @param array $mpvar MP var
+     * @param string $mpvar MP var
      * @param array $urlParts URL segments
      * @param bool $foundUID
      *
@@ -1045,7 +1045,7 @@ class UriGeneratorAndResolver implements SingletonInterface
         // List of "pages" fields to traverse for a "directory title" in the speaking URL (only from RootLine!!)
         $segTitleFieldList = $this->conf['segTitleFieldList'] ? $this->conf['segTitleFieldList'] : TX_HELLURL_SEGTITLEFIELDLIST_DEFAULT;
         $selList = GeneralUtility::uniqueList('uid,pid,doktype,mount_pid,mount_pid_ol,tx_hellurl_exclude,' . $segTitleFieldList);
-        $segTitleFieldArray = GeneralUtility::trimExplode(',', $segTitleFieldList, 1);
+        $segTitleFieldArray = GeneralUtility::trimExplode(',', $segTitleFieldList, true);
 
         // page select object - used to analyse mount points.
         $sys_page = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\PageRepository');
