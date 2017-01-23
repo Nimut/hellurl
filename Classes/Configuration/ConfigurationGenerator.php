@@ -36,7 +36,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class ConfigurationGenerator
 {
-
     const AUTOCONFIGURTION_FILE = 'typo3conf/hellurl_autoconf.php';
 
     /**
