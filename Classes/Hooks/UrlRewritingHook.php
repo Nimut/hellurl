@@ -1350,7 +1350,7 @@ class UrlRewritingHook implements SingletonInterface
                 return $GET_VARS;
             }
         }
-        return null;
+        return array();
     }
 
     /**
@@ -1421,7 +1421,7 @@ class UrlRewritingHook implements SingletonInterface
                 return $GET_VARS;
             }
         }
-        return null;
+        return array();
     }
 
     /**
@@ -1959,7 +1959,7 @@ class UrlRewritingHook implements SingletonInterface
      * @param string $value Value to match field in database to.
      * @param bool $aliasToUid If TRUE, the input $value is an alias-string that needs translation to an ID integer. FALSE (default) means the reverse direction
      *
-     * @return string Result value of lookup. If no value was found the $value is returned.
+     * @return int|string Result value of lookup. Either an int value (id) or a string (alias). If no value was found the $value is returned.
      */
     protected function lookUpTranslation($cfg, $value, $aliasToUid = false)
     {
@@ -2093,7 +2093,7 @@ class UrlRewritingHook implements SingletonInterface
      * @param int $lang sys_language_uid to use for lookup
      * @param string $aliasValue Optional alias value to limit search to
      *
-     * @return string Alias string. If none is found: false
+     * @return string|null Alias string. If none is found: null
      * @see lookUpTranslation(), lookUp_uniqAliasToId()
      */
     protected function lookUp_idToUniqAlias($cfg, $idValue, $lang, $aliasValue = '')
