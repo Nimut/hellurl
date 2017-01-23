@@ -137,7 +137,7 @@ class UrlRewritingHook implements SingletonInterface
     /**
      * Mime type that can be set according to the file extension (decoding only).
      *
-     * @var string
+     * @var string|null
      */
     protected $mimeType = null;
 
