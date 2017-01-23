@@ -1033,7 +1033,7 @@ class UrlRewritingHook implements SingletonInterface
                 $cachedInfo['GET_VARS']['id'] = $cachedInfo['id'];
                 $_SERVER['QUERY_STRING'] = $this->decodeSpURL_createQueryString($cachedInfo['GET_VARS']);
                 if (is_callable('TYPO3\\CMS\\Core\\Utility\\GeneralUtility::flushInternalRuntimeCaches')) {
-                    GeneralUtility::flushInternalRuntimeCaches();
+                    call_user_func('TYPO3\\CMS\\Core\\Utility\\GeneralUtility::flushInternalRuntimeCaches');
                 }
 
                 // Jump-admin if configured
