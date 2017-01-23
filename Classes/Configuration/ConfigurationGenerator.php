@@ -28,7 +28,6 @@ namespace Nimut\Hellurl\Configuration;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use TYPO3\CMS\Core\Locking\LockingStrategyInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -58,9 +57,11 @@ class ConfigurationGenerator
         $fileName = PATH_site . self::AUTOCONFIGURTION_FILE;
         if (class_exists('TYPO3\\CMS\\Core\\Locking\\LockFactory')) {
             $lockFactory = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Locking\\LockFactory');
+            $capabilities = constant('TYPO3\\CMS\\Core\\Locking\\LockingStrategyInterface::LOCK_CAPABILITY_EXCLUSIVE')
+                | constant('TYPO3\\CMS\\Core\\Locking\\LockingStrategyInterface::LOCK_CAPABILITY_NOBLOCK');
             $lockObject = $lockFactory->createLocker(
                 $fileName,
-                LockingStrategyInterface::LOCK_CAPABILITY_EXCLUSIVE | LockingStrategyInterface::LOCK_CAPABILITY_NOBLOCK
+                $capabilities
             );
             $lockObject->acquire();
         } else {
