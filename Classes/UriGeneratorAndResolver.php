@@ -37,7 +37,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class UriGeneratorAndResolver implements SingletonInterface
 {
-
     /**
      * PageRepository object for finding rootline on the fly
      *
@@ -598,7 +597,6 @@ class UriGeneratorAndResolver implements SingletonInterface
             // First, check for cached path of this page
             $cachedPagePath = false;
             if (!$page['tx_hellurl_exclude'] && !$stopUsingCache && !$this->conf['disablePathCache']) {
-
                 // Using pathq2 index!
                 /** @noinspection PhpUndefinedMethodInspection */
                 list($cachedPagePath) = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('pagepath', 'tx_hellurl_pathcache',
@@ -668,7 +666,6 @@ class UriGeneratorAndResolver implements SingletonInterface
 
         // If pagePath cache is not disabled, look for entry
         if (!$this->conf['disablePathCache']) {
-
             // Work from outside-in to look up path in cache
             $postVar = false;
             $copy_pathParts = $pathParts;
@@ -718,7 +715,6 @@ class UriGeneratorAndResolver implements SingletonInterface
 
         // Process row if found
         if ($row) { // We found it in the cache
-
             // Check for expiration. We can get one of three
             //   1. expire = 0
             //   2. expire <= time()
@@ -957,7 +953,6 @@ class UriGeneratorAndResolver implements SingletonInterface
      */
     protected function findIDBySegment($startPid, $mpvar, array &$urlParts, $currentIdMp = '', $foundUID = false)
     {
-
         // Creating currentIdMp variable if not set
         if (!is_array($currentIdMp)) {
             $currentIdMp = array($startPid, $mpvar, $foundUID);
@@ -1047,7 +1042,6 @@ class UriGeneratorAndResolver implements SingletonInterface
      */
     protected function findPageBySegmentAndPid($searchPid, $title)
     {
-
         // List of "pages" fields to traverse for a "directory title" in the speaking URL (only from RootLine!!)
         $segTitleFieldList = $this->conf['segTitleFieldList'] ? $this->conf['segTitleFieldList'] : TX_HELLURL_SEGTITLEFIELDLIST_DEFAULT;
         $selList = GeneralUtility::uniqueList('uid,pid,doktype,mount_pid,mount_pid_ol,tx_hellurl_exclude,' . $segTitleFieldList);

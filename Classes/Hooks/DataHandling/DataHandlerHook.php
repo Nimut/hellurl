@@ -36,7 +36,6 @@ use TYPO3\CMS\Core\SingletonInterface;
  */
 class DataHandlerHook implements SingletonInterface
 {
-
     /**
      * HellUrl configuration for the current host
      *
@@ -71,7 +70,7 @@ class DataHandlerHook implements SingletonInterface
     {
         if ($this->isTableForCache($tableName)) {
             if ($command === 'delete' || $command === 'move') {
-                list($pageId,) = $this->getPageData($tableName, $recordId);
+                list($pageId) = $this->getPageData($tableName, $recordId);
                 $this->fetchHellUrlConfiguration($pageId);
                 if ($command === 'delete') {
                     $this->clearPathCache($pageId);
@@ -119,7 +118,7 @@ class DataHandlerHook implements SingletonInterface
      *
      * @param string $command
      * @param string $tableName
-     * @param mixed $recordId
+     * @param int $recordId
      *
      * @return void
      */
@@ -303,7 +302,7 @@ class DataHandlerHook implements SingletonInterface
      */
     protected static function isTableForCache($tableName)
     {
-        return ($tableName === 'pages' || $tableName === 'pages_language_overlay');
+        return $tableName === 'pages' || $tableName === 'pages_language_overlay';
     }
 
     /**
@@ -323,7 +322,7 @@ class DataHandlerHook implements SingletonInterface
      *
      * @param string $command
      * @param string $tableName
-     * @param mixed $recordId
+     * @param int $recordId
      *
      * @return void
      */

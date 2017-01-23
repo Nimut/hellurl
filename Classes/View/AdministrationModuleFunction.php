@@ -64,9 +64,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         'gfx/new_el.gif' => 'actions-document-new',
     );
 
-    /**
-     *
-     */
     public function __construct()
     {
         $GLOBALS['LANG']->includeLLfile('EXT:hellurl/Resources/Private/Language/locallang_info_module.xml');
@@ -254,7 +251,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      */
     public function renderModule(\TYPO3\CMS\Backend\Tree\View\PageTreeView $tree)
     {
-
         // Initialize:
         $searchPath = trim(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('pathPrefixSearch'));
         $cmd = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET('cmd');
@@ -269,7 +265,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $output = '';
         $cc = 0;
         foreach ($tree->tree as $row) {
-
             // Get all pagepath entries for page:
             $pathCacheInfo = $this->getPathCache($row['row']['uid']);
 
@@ -279,7 +274,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 
             // Add at least one empty element:
             if (!count($pathCacheInfo)) {
-
                 // Add title:
                 $tCells = array();
                 $tCells[] = '<td nowrap="nowrap"' . $cellAttrib . '>' . $rowTitle . '</td>';
@@ -296,7 +290,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 $cc++;
             } else {
                 foreach ($pathCacheInfo as $c => $inf) {
-
                     // Init:
                     $deletedEntry = false;
                     $hash = $inf['pagepath'] . '|' . $inf['rootpage_id'] . '|' . $inf['language_id'];    // MP is not a part of this because the path itself should be different simply because the MP makes a different path! (see UriGeneratorAndResolver::pagePathtoID())
@@ -349,7 +342,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 
                     // Show page path:
                     if (strcmp($searchPath, '') && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($inf['pagepath'], $searchPath) && !$inf['expire']) {
-
                         // Delete entry:
                         if ($searchForm_delete) {
                             $this->deletePathCacheEntry($inf['cache_id']);
@@ -430,7 +422,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                     $tCells[] = '<td>' . htmlspecialchars($inf['mpvar']) . '</td>';
                     $tCells[] = '<td>' . htmlspecialchars($inf['rootpage_id']) . '</td>';
 
-                    #$tCells[]='<td nowrap="nowrap">'.htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::datetime($inf['expire'])).' / '.htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::calcAge($inf['expire']-time())).'</td>';
+                    //$tCells[]='<td nowrap="nowrap">'.htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::datetime($inf['expire'])).' / '.htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::calcAge($inf['expire']-time())).'</td>';
 
                     $trackSameUrl[$hash] = $inf['page_id'];
 
@@ -470,7 +462,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $tCells[] = '<td>Lang:</td>';
         $tCells[] = '<td>&MP:</td>';
         $tCells[] = '<td>RootPage ID:</td>';
-        #$tCells[]='<td>Expire:</td>';
+        //$tCells[]='<td>Expire:</td>';
         $output = '
 			<tr class="bgColor5 tableheader">
 				' . implode('
@@ -492,7 +484,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Fetch path caching information for page.
      *
-     * @param    int        Page ID
+     * @param int $pageId Page ID
      *
      * @return    array        Path Cache records
      */
@@ -514,7 +506,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         // Traverse result:
         $output = array();
         while (false != ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
-
             // Delete entries:
             if ($cmd === 'delete' && (!strcmp($entry, $row['cache_id']) || !strcmp($entry, 'ALL'))) {
                 $this->deletePathCacheEntry($row['cache_id']);
@@ -662,7 +653,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Deletes an entry in pathcache table
      *
-     * @param    int        Path Cache id (cache_id)
+     * @param int $cache_id Path Cache id (cache_id)
      *
      * @return    void
      */
@@ -693,7 +684,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      */
     public function copyPathCacheEntry(&$oEntry)
     {
-
         // Select old record:
         $cEntry = $oEntry;
         unset($cEntry['cache_id']);
@@ -715,8 +705,8 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Changes the "pagepath" value of an entry in the pathcache table
      *
-     * @param    int        Path Cache id (cache_id)
-     * @param    string        New value for the pagepath
+     * @param int $cache_id Path Cache id (cache_id)
+     * @param string $value New value for the pagepath
      *
      * @return    void
      */
@@ -751,7 +741,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Save / Cancel buttons
      *
-     * @param    string        Extra code.
+     * @param string $extra Extra code.
      *
      * @return    string        Form elements
      */
@@ -779,7 +769,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      */
     public function decodeView(\TYPO3\CMS\Backend\Tree\View\PageTreeView $tree)
     {
-
         // Delete entries:
         $cmd = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('cmd');
         $subcmd = '';
@@ -793,7 +782,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $cc = 0;
         $countDisplayed = 0;
         foreach ($tree->tree as $row) {
-
             // Select rows:
             $displayRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tx_hellurl_urldecodecache', 'page_id=' . intval($row['row']['uid']), '', 'spurl');
 
@@ -802,7 +790,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 
             // Add at least one empty element:
             if (!count($displayRows) || $subcmd === 'displayed') {
-
                 // Add title:
                 $tCells = array();
                 $tCells[] = '<td nowrap="nowrap">' . $rowTitle . '</td>';
@@ -825,7 +812,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 }
             } else {
                 foreach ($displayRows as $c => $inf) {
-
                     // Add icon/title and ID:
                     $tCells = array();
                     if (!$c) {
@@ -920,7 +906,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      */
     public function encodeView(\TYPO3\CMS\Backend\Tree\View\PageTreeView $tree)
     {
-
         // Delete entries:
         $cmd = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('cmd');
         $subcmd = '';
@@ -936,7 +921,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $duplicates = array();
 
         foreach ($tree->tree as $row) {
-
             // Select rows:
             $displayRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tx_hellurl_urlencodecache', 'page_id=' . intval($row['row']['uid']), '', 'content');
 
@@ -945,7 +929,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 
             // Add at least one empty element:
             if (!count($displayRows) || $subcmd === 'displayed') {
-
                 // Add title:
                 $tCells = array();
                 $tCells[] = '<td nowrap="nowrap">' . $rowTitle . '</td>';
@@ -1065,9 +1048,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         return $output;
     }
 
-    /**
-     *
-     */
     public function clearDEncodeCache($cmd, $decodeCache = false)
     {
         $table = $decodeCache ? 'tx_hellurl_urldecodecache' : 'tx_hellurl_urlencodecache';
@@ -1111,7 +1091,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $overviewRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('tablename,count(*) as number_of_rows', 'tx_hellurl_uniqalias', '', 'tablename', '', '', 'tablename');
 
         if ($tableName && isset($overviewRows[$tableName])) {    // Show listing of single table:
-
             // Some Commands:
             if ($cmd === 'delete') {
                 if ($entry === 'ALL') {
@@ -1230,7 +1209,6 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             $output = '';
             if (count($overviewRows)) {
                 foreach ($overviewRows as $aliasRecord) {
-
                     // Add data:
                     $tCells = array();
                     $tCells[] = '<td><a href="' . $this->linkSelf('&table=' . rawurlencode($aliasRecord['tablename'])) . '">' . $aliasRecord['tablename'] . '</a></td>';
@@ -1269,8 +1247,8 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Changes the "alias" value of an entry in the unique alias table
      *
-     * @param    int        UID of unique alias
-     * @param    string        New value for the alias
+     * @param int $cache_id UID of unique alias
+     * @param string $value New value for the alias
      *
      * @return    void
      */
@@ -1635,6 +1613,8 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     /**
      * Creates a header for the redirects table.
      *
+     * @param string $sortingDirection
+     *
      * @return string
      */
     protected function getRedirectViewHeader($sortingDirection)
@@ -1904,7 +1884,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 }
                 // Check for missing slash in destination
                 $parse = @parse_url($fields['target']);
-                if ($fields['target']{0} != '/' && ($parse === false || !isset($parse['scheme']))) {
+                if ($fields['target'][0] != '/' && ($parse === false || !isset($parse['scheme']))) {
                     $fields['target'] = '/' . $fields['target'];
                 }
 
@@ -1955,7 +1935,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     {
         $parts = @parse_url($url);
         if (!is_array($parts) || empty($parts['scheme'])) {
-            if ($url{0} != '/') {
+            if ($url[0] != '/') {
                 $url = '/' . $url;
             }
         }
@@ -1975,10 +1955,9 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     {
         if ($this->typo3VersionMain === 6) {
             return $this->getIconByIconUtility($icon, $iconSize, $backPath, $title, $alt);
-        } else {
-            $icon = $this->iconMapping[$icon];
-            return $this->getIconByIconFactory($icon);
         }
+        $icon = $this->iconMapping[$icon];
+        return $this->getIconByIconFactory($icon);
     }
 
     /**
