@@ -95,8 +95,10 @@ class PageBrowserViewHelper
     protected function generatePageBrowser()
     {
         $markup = '';
-        for ($page = 1; $page <= min($this->totalPages, $this->currentPage, self::PAGES_AFTER_START + 1); $page++) {
-            $markup .= $this->createCell($page);
+        $pageMax = min($this->totalPages, $this->currentPage, self::PAGES_AFTER_START + 1);
+        $page = $pageMax + 1;
+        for ($i = 1; $i <= $pageMax; $i++) {
+            $markup .= $this->createCell($i);
         }
 
         if ($page < $this->currentPage - self::PAGES_BEFORE) {
@@ -104,17 +106,18 @@ class PageBrowserViewHelper
             $page = $this->currentPage - self::PAGES_BEFORE;
         }
 
-        for (; $page <= min($this->totalPages, $this->currentPage + self::PAGES_AFTER); $page++) {
-            $markup .= $this->createCell($page);
+        $pageMax = min($this->totalPages, $this->currentPage + self::PAGES_AFTER);
+        for ($i = $page; $i <= $pageMax; $i++) {
+            $markup .= $this->createCell($i);
         }
 
-        if ($page < $this->totalPages - self::PAGES_BEFORE_END) {
+        if ($pageMax < $this->totalPages - self::PAGES_BEFORE_END) {
             $markup .= $this->createEllipses();
             $page = $this->totalPages - self::PAGES_BEFORE_END;
         }
 
-        for (; $page <= $this->totalPages; $page++) {
-            $markup .= $this->createCell($page);
+        for ($i = $page; $i <= $this->totalPages; $i++) {
+            $markup .= $this->createCell($i);
         }
 
         return $markup;
