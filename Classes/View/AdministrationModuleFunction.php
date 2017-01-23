@@ -307,7 +307,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                     $editIcon = '<a href="#" onclick="' . htmlspecialchars($onClick) . '">' .
                         $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH']) .
                         '</a>';
-                    $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::viewOnClick($row['row']['uid'], $GLOBALS['BACK_PATH'], '', '', '', '');
+                    $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::viewOnClick($row['row']['uid'], $GLOBALS['BACK_PATH'], null, '', '', '');
                     $editIcon .= '<a href="#" onclick="' . htmlspecialchars($onClick) . '">' .
                         $this->getIcon('gfx/zoom.gif', 'width="12" height="12"', $GLOBALS['BACK_PATH']) .
                         '</a>';
@@ -321,7 +321,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                             $editIcon = '<a href="#" onclick="' . htmlspecialchars($onClick) . '">' .
                                 $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH']) .
                                 '</a>';
-                            $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::viewOnClick($row['row']['uid'], $GLOBALS['BACK_PATH'], '', '', '', '&L=' . $olRec['sys_language_uid']);
+                            $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::viewOnClick($row['row']['uid'], $GLOBALS['BACK_PATH'], null, '', '', '&L=' . $olRec['sys_language_uid']);
                             $editIcon .= '<a href="#" onclick="' . htmlspecialchars($onClick) . '">' .
                                 $this->getIcon('gfx/zoom.gif', 'width="12" height="12"', $GLOBALS['BACK_PATH']) .
                                 '</a>';
@@ -624,7 +624,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      */
     protected function getSystemLanguages()
     {
-        $languages = (array)\TYPO3\CMS\Backend\Utility\BackendUtility::getRecordsByField('sys_language', 'pid', 0, '', '', 'title');
+        $languages = (array)\TYPO3\CMS\Backend\Utility\BackendUtility::getRecordsByField('sys_language', 'pid', '0', '', '', 'title');
 
         $defaultLanguageLabel = $this->getDefaultLanguageName();
 
