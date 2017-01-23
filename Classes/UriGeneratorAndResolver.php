@@ -656,7 +656,7 @@ class UriGeneratorAndResolver implements SingletonInterface
      *
      * @param array $pathParts Array of segments from virtual path
      *
-     * @return int Page ID
+     * @return array Page ID and GET_VARS
      * @see decodeSpURL_idFromPath()
      */
     protected function pagePathtoID(&$pathParts)
@@ -1223,7 +1223,7 @@ class UriGeneratorAndResolver implements SingletonInterface
      *
      * @param int $offsetFromNow Offset to expiration
      *
-     * @return int Expiration time stamp
+     * @return int|string Expiration timestamp or SQL string if adodb is loaded
      */
     protected function makeExpirationTime($offsetFromNow = 0)
     {
