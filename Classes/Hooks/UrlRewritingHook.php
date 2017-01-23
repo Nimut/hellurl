@@ -122,7 +122,7 @@ class UrlRewritingHook implements SingletonInterface
     /**
      * Indicates whether devLog is enabled
      *
-     * @var true
+     * @var bool
      */
     protected $enableDevLog = false;
 
