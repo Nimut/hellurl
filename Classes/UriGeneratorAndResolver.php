@@ -946,17 +946,15 @@ class UriGeneratorAndResolver implements SingletonInterface
      * @param int $startPid Page id in which to search subpages matching first part of urlParts
      * @param string $mpvar MP variable string
      * @param array $urlParts Segments of the virtual path (passed by reference; items removed)
-     * @param array|string $currentIdMp Array with the current pid/mpvar to return if no processing is done.
+     * @param array|null $currentIdMp Array with the current pid/mpvar to return if no processing is done.
      * @param bool $foundUID
      *
      * @return array With resolved id and $mpvar
      */
-    protected function findIDBySegment($startPid, $mpvar, array &$urlParts, $currentIdMp = '', $foundUID = false)
+    protected function findIDBySegment($startPid, $mpvar, array &$urlParts, $currentIdMp = null, $foundUID = false)
     {
         // Creating currentIdMp variable if not set
-        if (!is_array($currentIdMp)) {
-            $currentIdMp = array($startPid, $mpvar, $foundUID);
-        }
+        $currentIdMp = ($currentIdMp !== null) ? $currentIdMp : array($startPid, $mpvar, $foundUID);
 
         // No more urlparts? Return what we have.
         if (count($urlParts) == 0) {
