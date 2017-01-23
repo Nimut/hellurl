@@ -30,7 +30,6 @@ return PhpCsFixer\Config::create()
         'no_empty_phpdoc' => true,
         'no_empty_statement' => true,
         'no_extra_consecutive_blank_lines' => array(
-            'break',
             'continue',
             'curly_brace_block',
             'extra',
@@ -75,8 +74,9 @@ return PhpCsFixer\Config::create()
     ))
     ->setFinder(
         PhpCsFixer\Finder::create()
+            ->in(__DIR__)
             ->exclude('.Build')
             ->exclude('doc')
             ->exclude('Resources')
-            ->in(__DIR__)
+            ->notName('ext_emconf.php')
     );
