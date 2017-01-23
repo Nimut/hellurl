@@ -528,7 +528,7 @@ class UriGeneratorAndResolver implements SingletonInterface
         }
         if (!$rootFound) {
             // Pass #2 -- check normal page
-            $this->pObj->devLog('Starting to walk rootline for id=' . $id . ' from index=' . $i, $rootLine);
+            $this->pObj->devLog('Starting to walk rootline for id=' . $id . ' from index=0 to ' . $numberOfRootlineEntries, $rootLine);
             for ($i = 0; $i < $numberOfRootlineEntries; $i++) {
                 if ($GLOBALS['TSFE']->tmpl->rootLine[0]['uid'] == $rootLine[$i]['uid']) {
                     $this->pObj->devLog('Found rootline', array('uid' => $id, 'rootline start pid' => $rootLine[$i]['uid']));
