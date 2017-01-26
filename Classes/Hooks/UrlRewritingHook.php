@@ -1442,7 +1442,7 @@ class UrlRewritingHook implements SingletonInterface
             if (is_array($v)) {
                 $this->decodeSpURL_fixBrackets($arr[$k]);
             } else {
-                if (strchr($k, '[') && !strchr($k, ']')) {
+                if (strstr($k, '[') && !strstr($k, ']')) {
                     $bad_keys[] = $k;
                 }
             }
