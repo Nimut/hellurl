@@ -303,13 +303,13 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 
                     // Add values from alternative field used to generate URL:
                     $baseRow = $row['row'];    // page row as base.
-                    $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::editOnClick('&edit[pages][' . $row['row']['uid'] . ']=edit&columnsOnly=title,nav_title,alias,tx_hellurl_pathsegment', $this->pObj->doc->backPath);
+                    $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::editOnClick('&edit[pages][' . $row['row']['uid'] . ']=edit&columnsOnly=title,nav_title,alias,tx_hellurl_pathsegment', $GLOBALS['BACK_PATH']);
                     $editIcon = '<a href="#" onclick="' . htmlspecialchars($onClick) . '">' .
-                        $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
+                        $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH']) .
                         '</a>';
-                    $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::viewOnClick($row['row']['uid'], $this->pObj->doc->backPath, '', '', '', '');
+                    $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::viewOnClick($row['row']['uid'], $GLOBALS['BACK_PATH'], null, '', '', '');
                     $editIcon .= '<a href="#" onclick="' . htmlspecialchars($onClick) . '">' .
-                        $this->getIcon('gfx/zoom.gif', 'width="12" height="12"', $this->pObj->doc->backPath) .
+                        $this->getIcon('gfx/zoom.gif', 'width="12" height="12"', $GLOBALS['BACK_PATH']) .
                         '</a>';
 
                     if ($inf['language_id'] > 0) {    // For alternative languages, show another list of fields, form page overlay record:
@@ -317,13 +317,13 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                         list($olRec) = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordsByField('pages_language_overlay', 'pid', $row['row']['uid'], ' AND sys_language_uid=' . intval($inf['language_id']));
                         if (is_array($olRec)) {
                             $baseRow = array_merge($baseRow, $olRec);
-                            $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::editOnClick('&edit[pages_language_overlay][' . $olRec['uid'] . ']=edit&columnsOnly=title,nav_title', $this->pObj->doc->backPath);
+                            $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::editOnClick('&edit[pages_language_overlay][' . $olRec['uid'] . ']=edit&columnsOnly=title,nav_title', $GLOBALS['BACK_PATH']);
                             $editIcon = '<a href="#" onclick="' . htmlspecialchars($onClick) . '">' .
-                                $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
+                                $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH']) .
                                 '</a>';
-                            $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::viewOnClick($row['row']['uid'], $this->pObj->doc->backPath, '', '', '', '&L=' . $olRec['sys_language_uid']);
+                            $onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::viewOnClick($row['row']['uid'], $GLOBALS['BACK_PATH'], null, '', '', '&L=' . $olRec['sys_language_uid']);
                             $editIcon .= '<a href="#" onclick="' . htmlspecialchars($onClick) . '">' .
-                                $this->getIcon('gfx/zoom.gif', 'width="12" height="12"', $this->pObj->doc->backPath) .
+                                $this->getIcon('gfx/zoom.gif', 'width="12" height="12"', $GLOBALS['BACK_PATH']) .
                                 '</a>';
                         } else {
                             $baseRow = array();
@@ -384,16 +384,16 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                     } else {
                         $tCells[] = '<td>' .
                             '<a href="' . $this->linkSelf('&cmd=delete&entry=' . $inf['cache_id']) . '">' .
-                            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete') .
+                            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Delete') .
                             '</a>' .
                             '<a href="' . $this->linkSelf('&cmd=edit&entry=' . $inf['cache_id']) . '">' .
-                            $this->getIcon('gfx/edit2.gif', 'width="12" height="12"', $this->pObj->doc->backPath, 'Edit') .
+                            $this->getIcon('gfx/edit2.gif', 'width="12" height="12"', $GLOBALS['BACK_PATH'], 'Edit') .
                             '</a>' .
                             '<a href="' . $this->linkSelf('&pathPrefixSearch=' . rawurlencode($inf['pagepath'])) . '">' .
-                            $this->getIcon('gfx/napshot.gif', 'width="12" height="12"', $this->pObj->doc->backPath, 'Use for search') .
+                            $this->getIcon('gfx/napshot.gif', 'width="12" height="12"', $GLOBALS['BACK_PATH'], 'Use for search') .
                             '</a>' .
                             '<a href="' . $this->linkSelf('&cmd=copy&entry=' . $inf['cache_id']) . '">' .
-                            $this->getIcon('gfx/clip_copy.gif', 'width="12" height="12"', $this->pObj->doc->backPath, 'Copy entry') .
+                            $this->getIcon('gfx/clip_copy.gif', 'width="12" height="12"', $GLOBALS['BACK_PATH'], 'Copy entry') .
                             '</a>' .
                             '</td>';
                     }
@@ -401,7 +401,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                         ($inf['expire'] ? htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::dateTimeAge($inf['expire'], -1)) : '') .
                         ($inf['expire'] ?
                             '<a href="' . $this->linkSelf('&cmd=raiseExpire&entry=' . $inf['cache_id']) . '">' .
-                            $this->getIcon('gfx/up.gif', 'width="14" height="14"', $this->pObj->doc->backPath, 'Set expire time to 30 days') .
+                            $this->getIcon('gfx/up.gif', 'width="14" height="14"', $GLOBALS['BACK_PATH'], 'Set expire time to 30 days') .
                             '</a>' : '') .
                         '</td>';
 
@@ -447,15 +447,15 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $tCells[] = '<td>Pagepath:</td>';
         $tCells[] = '<td>' .
             '<a href="' . $this->linkSelf('&cmd=delete&entry=ALL') . '" onclick="return confirm(\'Are you sure you want to flush all cached page paths?\');">' .
-            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
+            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH']) .
             '</a>' .
             '<a href="' . $this->linkSelf('&cmd=edit&entry=ALL') . '">' .
-            $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
+            $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH']) .
             '</a>' .
             '</td>';
         $tCells[] = '<td>Expires:' .
             '<a href="' . $this->linkSelf('&cmd=flushExpired') . '">' .
-            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Flush all expired') .
+            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Flush all expired') .
             '</a>' .
             '</td>';
         $tCells[] = '<td>Errors:</td>';
@@ -624,7 +624,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
      */
     protected function getSystemLanguages()
     {
-        $languages = (array)\TYPO3\CMS\Backend\Utility\BackendUtility::getRecordsByField('sys_language', 'pid', 0, '', '', 'title');
+        $languages = (array)\TYPO3\CMS\Backend\Utility\BackendUtility::getRecordsByField('sys_language', 'pid', '0', '', '', 'title');
 
         $defaultLanguageLabel = $this->getDefaultLanguageName();
 
@@ -819,7 +819,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                         $tCells[] = '<td nowrap="nowrap" rowspan="' . count($displayRows) . '">' . $row['row']['uid'] . '</td>';
                         $tCells[] = '<td rowspan="' . count($displayRows) . '">' .
                             '<a href="' . $this->linkSelf('&cmd=deleteDC&entry=page_' . intval($row['row']['uid'])) . '">' .
-                            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete entries for page') .
+                            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Delete entries for page') .
                             '</a>' .
                             '</td>';
                     }
@@ -836,7 +836,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                     // Delete:
                     $tCells[] = '<td>' .
                         '<a href="' . $this->linkSelf('&cmd=deleteDC&entry=urlhash_' . rawurlencode($inf['url_hash'])) . '">' .
-                        $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete entry') .
+                        $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Delete entry') .
                         '</a>' .
                         '</td>';
 
@@ -877,12 +877,12 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
         $output = '<br/><br/>
 		Displayed entries: <b>' . $countDisplayed . '</b> ' .
             '<a href="' . $this->linkSelf('&cmd=deleteDC&entry=displayed') . '">' .
-            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete displayed entries') .
+            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Delete displayed entries') .
             '</a>' .
             '<br/>
 		Total entries in decode cache: <b>' . $count_allInTable['count'] . '</b> ' .
             '<a href="' . $this->linkSelf('&cmd=deleteDC&entry=all') . '">' .
-            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete WHOLE decode cache!') .
+            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Delete WHOLE decode cache!') .
             '</a>' .
             '<br/>
 		<table border="0" cellspacing="1" cellpadding="0" id="tx-hellurl-pathcacheTable" class="lrPadding c-list">' . $output . '
@@ -959,7 +959,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                         $tCells[] = '<td nowrap="nowrap" rowspan="' . count($displayRows) . '">' . $row['row']['uid'] . '</td>';
                         $tCells[] = '<td rowspan="' . count($displayRows) . '">' .
                             '<a href="' . $this->linkSelf('&cmd=deleteEC&entry=page_' . intval($row['row']['uid'])) . '">' .
-                            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete entries for page') .
+                            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Delete entries for page') .
                             '</a>' .
                             '</td>';
                     }
@@ -976,7 +976,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                     // Delete:
                     $tCells[] = '<td>' .
                         '<a href="' . $this->linkSelf('&cmd=deleteEC&entry=urlhash_' . rawurlencode($inf['url_hash'])) . '">' .
-                        $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete entry!') .
+                        $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Delete entry!') .
                         '</a>' .
                         '</td>';
 
@@ -1034,12 +1034,12 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
 		<br/>
 		Displayed entries: <b>' . $countDisplayed . '</b> ' .
             '<a href="' . $this->linkSelf('&cmd=deleteEC&entry=displayed') . '">' .
-            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete displayed entries') .
+            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Delete displayed entries') .
             '</a>' .
             '<br/>
 		Total entries in encode cache: <b>' . $count_allInTable['count'] . '</b> ' .
             '<a href="' . $this->linkSelf('&cmd=deleteEC&entry=all') . '">' .
-            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete WHOLE encode cache!') .
+            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Delete WHOLE encode cache!') .
             '</a>' .
             '<br/>
 		<table border="0" cellspacing="1" cellpadding="0" id="tx-hellurl-pathcacheTable" class="lrPadding c-list">' . $output . '
@@ -1136,11 +1136,11 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 $tCells[] = '<td>' .
                     // Edit link:
                     '<a href="' . $this->linkSelf('&table=' . rawurlencode($tableName) . '&cmd=edit&entry=' . $aliasRecord['uid']) . '">' .
-                    $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
+                    $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH']) .
                     '</a>' .
                     // Delete link:
                     '<a href="' . $this->linkSelf('&table=' . rawurlencode($tableName) . '&cmd=delete&entry=' . $aliasRecord['uid']) . '">' .
-                    $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath) .
+                    $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH']) .
                     '</a>' .
                     '</td>';
 
@@ -1170,15 +1170,15 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             $tCells[] = '<td>Lang:</td>';
             $tCells[] = '<td>Expire:' .
                 (!$search ? '<a href="' . $this->linkSelf('&table=' . rawurlencode($tableName) . '&cmd=flushExpired') . '">' .
-                    $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Flush expired') .
+                    $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Flush expired') .
                     '</a>' : '') .
                 '</td>';
             $tCells[] = '<td>' .
                 (!$search ? '<a href="' . $this->linkSelf('&table=' . rawurlencode($tableName) . '&cmd=edit&entry=ALL') . '">' .
-                    $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Edit all') .
+                    $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Edit all') .
                     '</a>' .
                     '<a href="' . $this->linkSelf('&table=' . rawurlencode($tableName) . '&cmd=delete&entry=ALL') . '" onclick="return confirm(\'Delete all?\');">' .
-                    $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete all') .
+                    $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Delete all') .
                     '</a>' : '') .
                 '</td>';
             $tCells[] = '<td>Error:</td>';
@@ -1357,7 +1357,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
                 $tCells[] = '<td>' . \TYPO3\CMS\Backend\Utility\BackendUtility::dateTimeAge($rec['tstamp']) . '</td>';
                 $tCells[] = '<td><a href="' . htmlspecialchars($host . '/' . $rec['url']) . '" target="_blank">' . ($host ? $host . '/' : '') . htmlspecialchars($rec['url']) . '</a>' .
                     ' <a href="' . $this->linkSelf('&cmd=new&data[0][source]=' . rawurlencode($rec['url']) . '&SET[type]=redirects') . '">' .
-                    $this->getIcon('gfx/napshot.gif', 'width="12" height="12"', $this->pObj->doc->backPath, 'Set as redirect') .
+                    $this->getIcon('gfx/napshot.gif', 'width="12" height="12"', $GLOBALS['BACK_PATH'], 'Set as redirect') .
                     '</a>' .
                     '</td>';
                 $tCells[] = '<td>' . htmlspecialchars($rec['error']) . '</td>';
@@ -1393,7 +1393,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             $output = '
 			<br/>
 				<a href="' . $this->linkSelf('&cmd=deleteAll') . '">' .
-                $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete All') .
+                $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Delete All') .
                 ' Flush log</a>
 				<br/>
 			<table border="0" cellspacing="1" cellpadding="0" id="tx-hellurl-pathcacheTable" class="lrPadding c-list">' . $output . '
@@ -1552,10 +1552,10 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     {
         $output = '<td>' .
             '<a href="' . $this->linkSelf('&cmd=edit&uid=' . rawurlencode($rec['uid'])) . '&page=' . $page . '">' .
-            $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Edit entry') .
+            $this->getIcon('gfx/edit2.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Edit entry') .
             '</a>' .
             '<a href="' . $this->linkSelf('&cmd=delete&uid=' . rawurlencode($rec['uid'])) . '&page=' . $page . '">' .
-            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'Delete entry') .
+            $this->getIcon('gfx/garbage.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'Delete entry') .
             '</a>' .
             '</td>';
         $output .= sprintf('<td><a href="%s" target="_blank">/%s</a></td>', htmlspecialchars(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . $rec['url']), htmlspecialchars($rec['url']));
@@ -1706,7 +1706,7 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
     protected function getNewButton()
     {
         $content = '<div style="margin:0 0 0.5em 3px"><a href="' . $this->linkSelf('&cmd=new') . '">' .
-            $this->getIcon('gfx/new_el.gif', 'width="11" height="12"', $this->pObj->doc->backPath, 'New entry') .
+            $this->getIcon('gfx/new_el.gif', 'width="11" height="12"', $GLOBALS['BACK_PATH'], 'New entry') .
             ' Add new redirects</a></div>';
         return $content;
     }

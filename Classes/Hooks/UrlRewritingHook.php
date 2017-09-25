@@ -122,7 +122,7 @@ class UrlRewritingHook implements SingletonInterface
     /**
      * Indicates whether devLog is enabled
      *
-     * @var true
+     * @var bool
      */
     protected $enableDevLog = false;
 
@@ -137,13 +137,24 @@ class UrlRewritingHook implements SingletonInterface
     /**
      * Mime type that can be set according to the file extension (decoding only).
      *
-     * @var string
+     * @var string|null
      */
     protected $mimeType = null;
 
-    public $enableStrictMode = false;
-
+    /**
+     * @var bool
+     */
     public $enableChashDebug = false;
+
+    /**
+     * @var bool
+     */
+    protected $enableChashUrlDebug = false;
+
+    /**
+     * @var bool
+     */
+    public $enableStrictMode = false;
 
     /**
      * If non-empty, corresponding URL query parameter will be ignored in preVars
@@ -1022,7 +1033,7 @@ class UrlRewritingHook implements SingletonInterface
                 $cachedInfo['GET_VARS']['id'] = $cachedInfo['id'];
                 $_SERVER['QUERY_STRING'] = $this->decodeSpURL_createQueryString($cachedInfo['GET_VARS']);
                 if (is_callable('TYPO3\\CMS\\Core\\Utility\\GeneralUtility::flushInternalRuntimeCaches')) {
-                    GeneralUtility::flushInternalRuntimeCaches();
+                    call_user_func('TYPO3\\CMS\\Core\\Utility\\GeneralUtility::flushInternalRuntimeCaches');
                 }
 
                 // Jump-admin if configured
@@ -1339,7 +1350,7 @@ class UrlRewritingHook implements SingletonInterface
                 return $GET_VARS;
             }
         }
-        return null;
+        return array();
     }
 
     /**
@@ -1410,7 +1421,7 @@ class UrlRewritingHook implements SingletonInterface
                 return $GET_VARS;
             }
         }
-        return null;
+        return array();
     }
 
     /**
@@ -1948,7 +1959,7 @@ class UrlRewritingHook implements SingletonInterface
      * @param string $value Value to match field in database to.
      * @param bool $aliasToUid If TRUE, the input $value is an alias-string that needs translation to an ID integer. FALSE (default) means the reverse direction
      *
-     * @return string Result value of lookup. If no value was found the $value is returned.
+     * @return int|string Result value of lookup. Either an int value (id) or a string (alias). If no value was found the $value is returned.
      */
     protected function lookUpTranslation($cfg, $value, $aliasToUid = false)
     {
@@ -2036,7 +2047,7 @@ class UrlRewritingHook implements SingletonInterface
                     if ($csConvObj->strlen('utf-8', $aliasValue) > $maximumAliasLength) {
                         $aliasValue = $csConvObj->crop('utf-8', $aliasValue, $maximumAliasLength);
                     }
-                    return $this->lookUp_newAlias($cfg, $aliasValue, $value, $lang);
+                    return $this->lookUp_newAlias($cfg, $aliasValue, (int)$value, $lang);
                 }   // If no cache for alias, then just return whatever value is appropriate:
                         if (strlen($row[$cfg['alias_field']]) <= $maximumAliasLength) {
                             return $row[$cfg['alias_field']];
@@ -2082,7 +2093,7 @@ class UrlRewritingHook implements SingletonInterface
      * @param int $lang sys_language_uid to use for lookup
      * @param string $aliasValue Optional alias value to limit search to
      *
-     * @return string Alias string. If none is found: false
+     * @return string|null Alias string. If none is found: null
      * @see lookUpTranslation(), lookUp_uniqAliasToId()
      */
     protected function lookUp_idToUniqAlias($cfg, $idValue, $lang, $aliasValue = '')
@@ -2124,7 +2135,7 @@ class UrlRewritingHook implements SingletonInterface
         $newAliasValue = $this->lookUp_cleanAlias($cfg, $newAliasValue);
 
         // If autoupdate is true we might be here even if an alias exists. Therefore we check if that alias is the $newAliasValue and if so, we return that instead of making a new, unique one.
-        if ($cfg['autoUpdate'] && $this->lookUp_idToUniqAlias($cfg, $idValue, $lang, $newAliasValue)) {
+        if ($cfg['autoUpdate'] && $this->lookUp_idToUniqAlias($cfg, (string)$idValue, $lang, $newAliasValue)) {
             return $newAliasValue;
         }
 
@@ -2163,7 +2174,7 @@ class UrlRewritingHook implements SingletonInterface
         );
 
         // Checking that this alias hasn't been stored since we looked last time
-        $returnAlias = $this->lookUp_idToUniqAlias($cfg, $idValue, $lang, $uniqueAlias);
+        $returnAlias = $this->lookUp_idToUniqAlias($cfg, (string)$idValue, $lang, $uniqueAlias);
         if ($returnAlias) {
             // If we are here it is because another process managed to create this alias in the time between we looked the first time and now when we want to put it in database.
             $uniqueAlias = $returnAlias;
@@ -2349,7 +2360,7 @@ class UrlRewritingHook implements SingletonInterface
     /**
      * Returns configuration for a postVarSet (default) based on input page id
      *
-     * @param int $pageId Page id
+     * @param int|string $pageId Page id or alias
      * @param string $mainCat Main key in hellurl configuration array. Default is "postVarSets" but could be "fixedPostVars"
      *
      * @return array Configuration array
@@ -2360,7 +2371,7 @@ class UrlRewritingHook implements SingletonInterface
     {
         // If the page id is NOT an integer, it's an alias we have to look up
         if (!MathUtility::canBeInterpretedAsInteger($pageId)) {
-            $pageId = $this->pageAliasToID($pageId);
+            $pageId = $this->pageAliasToID((string)$pageId);
         }
 
         // Checking if the value is not an array but a pointer to another key

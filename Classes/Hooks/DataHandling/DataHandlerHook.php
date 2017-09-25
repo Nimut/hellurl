@@ -216,7 +216,7 @@ class DataHandlerHook implements SingletonInterface
         /** @var $tree \TYPO3\CMS\Backend\Tree\View\PageTreeView */
         $tree = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Tree\\View\\PageTreeView');
         $tree->init('AND ' . $GLOBALS['BE_USER']->getPagePermsClause(1));
-        $tree->makeHTML = false;
+        $tree->makeHTML = 0;
         $tree->getTree($pageId, 99, '');
 
         foreach ($tree->tree as $data) {

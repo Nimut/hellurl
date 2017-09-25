@@ -12,9 +12,18 @@ matrix:
     - php: 5.4
     - php: 5.3
     - php: 7.0
-      env: CODE_ANALYSIS=yes
+      env: TYPO3="dev-master as 8.5.0" CODE_ANALYSIS=yes
+    - php: 7.0
+      env: TYPO3=^8.0 CODE_ANALYSIS=yes
+    - php: 7.0
+      env: TYPO3=^7.6 CODE_ANALYSIS=yes
+    - php: 7.0
+      env: TYPO3=^6.2 CODE_ANALYSIS=yes
   allow_failures:
-    - env: CODE_ANALYSIS=yes
+    - env: TYPO3="dev-master as 8.5.0" CODE_ANALYSIS=yes
+    - env: TYPO3=^8.0 CODE_ANALYSIS=yes
+    - env: TYPO3=^7.6 CODE_ANALYSIS=yes
+    - env: TYPO3=^6.2 CODE_ANALYSIS=yes
 
 addons:
   apt:
@@ -30,7 +39,7 @@ script:
 
    - >
      if [[ "$CODE_ANALYSIS" == "yes" ]]; then
-       composer require typo3/cms="^7.6"
+       composer require typo3/cms="$TYPO3" --ignore-platform-reqs
        git checkout composer.json
        .Build/bin/phpstan analyse --level 5 ext_localconf.php ext_tables.php Classes
      fi
