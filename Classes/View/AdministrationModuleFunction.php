@@ -509,8 +509,8 @@ class AdministrationModuleFunction extends \TYPO3\CMS\Backend\Module\AbstractFun
             // Delete entries:
             if ($cmd === 'delete' && (!strcmp($entry, $row['cache_id']) || !strcmp($entry, 'ALL'))) {
                 $this->deletePathCacheEntry($row['cache_id']);
-                // Raise expire times:
             } elseif ($cmd === 'raiseExpire' && !strcmp($entry, $row['cache_id'])) {
+                // Raise expire times:
                 $this->raiseExpirePathCacheEntry($row);
                 $output[] = $row;
             } elseif ($cmd === 'flushExpired' && $row['expire'] && $row['expire'] < time()) {

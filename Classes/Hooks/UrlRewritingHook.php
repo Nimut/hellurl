@@ -763,43 +763,44 @@ class UrlRewritingHook implements SingletonInterface
                 $GLOBALS['TYPO3_DB']->sql_free_result($res);
             }
             return $GLOBALS['TSFE']->applicationData['tx_hellurl']['_CACHE'][$hash];
-        }   // Setting encoded URL in cache:
-            // No caching if FE editing is enabled!
-            if (!$this->isBEUserLoggedIn()) {
-                $GLOBALS['TSFE']->applicationData['tx_hellurl']['_CACHE'][$hash] = $setEncodedURL;
+        }
+        // Setting encoded URL in cache:
+        // No caching if FE editing is enabled!
+        if (!$this->isBEUserLoggedIn()) {
+            $GLOBALS['TSFE']->applicationData['tx_hellurl']['_CACHE'][$hash] = $setEncodedURL;
 
-                // If the page id is NOT an integer, it's an alias we have to look up
-                if (!MathUtility::canBeInterpretedAsInteger($this->encodePageId)) {
-                    $this->encodePageId = $this->pageAliasToID($this->encodePageId);
-                }
+            // If the page id is NOT an integer, it's an alias we have to look up
+            if (!MathUtility::canBeInterpretedAsInteger($this->encodePageId)) {
+                $this->encodePageId = $this->pageAliasToID($this->encodePageId);
+            }
 
-                if ($this->extConf['init']['enableUrlEncodeCache'] && $this->canCachePageURL($this->encodePageId)) {
-                    $insertFields = array(
-                        'url_hash' => $hash,
-                        'origparams' => $urlData,
-                        'internalExtras' => count($internalExtras) ? serialize($internalExtras) : '',
-                        'content' => $setEncodedURL,
-                        'page_id' => $this->encodePageId,
-                        'tstamp' => time(),
-                    );
-                    if ($this->useMySQLExtendedSyntax) {
-                        /** @noinspection PhpUndefinedMethodInspection */
-                        $query = $GLOBALS['TYPO3_DB']->INSERTquery('tx_hellurl_urlencodecache', $insertFields);
-                        $query .= ' ON DUPLICATE KEY UPDATE tstamp=' . $insertFields['tstamp'];
-                        /** @noinspection PhpUndefinedMethodInspection */
-                        $GLOBALS['TYPO3_DB']->sql_query($query);
-                    } else {
-                        /** @noinspection PhpUndefinedMethodInspection */
-                        $GLOBALS['TYPO3_DB']->sql_query('START TRANSACTION');
-                        /** @noinspection PhpUndefinedMethodInspection */
-                        $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_hellurl_urlencodecache', 'url_hash=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($hash, 'tx_hellurl_urlencodecache'));
-                        /** @noinspection PhpUndefinedMethodInspection */
-                        $GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_hellurl_urlencodecache', $insertFields);
-                        /** @noinspection PhpUndefinedMethodInspection */
-                        $GLOBALS['TYPO3_DB']->sql_query('COMMIT');
-                    }
+            if ($this->extConf['init']['enableUrlEncodeCache'] && $this->canCachePageURL($this->encodePageId)) {
+                $insertFields = array(
+                    'url_hash' => $hash,
+                    'origparams' => $urlData,
+                    'internalExtras' => count($internalExtras) ? serialize($internalExtras) : '',
+                    'content' => $setEncodedURL,
+                    'page_id' => $this->encodePageId,
+                    'tstamp' => time(),
+                );
+                if ($this->useMySQLExtendedSyntax) {
+                    /** @noinspection PhpUndefinedMethodInspection */
+                    $query = $GLOBALS['TYPO3_DB']->INSERTquery('tx_hellurl_urlencodecache', $insertFields);
+                    $query .= ' ON DUPLICATE KEY UPDATE tstamp=' . $insertFields['tstamp'];
+                    /** @noinspection PhpUndefinedMethodInspection */
+                    $GLOBALS['TYPO3_DB']->sql_query($query);
+                } else {
+                    /** @noinspection PhpUndefinedMethodInspection */
+                    $GLOBALS['TYPO3_DB']->sql_query('START TRANSACTION');
+                    /** @noinspection PhpUndefinedMethodInspection */
+                    $GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_hellurl_urlencodecache', 'url_hash=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($hash, 'tx_hellurl_urlencodecache'));
+                    /** @noinspection PhpUndefinedMethodInspection */
+                    $GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_hellurl_urlencodecache', $insertFields);
+                    /** @noinspection PhpUndefinedMethodInspection */
+                    $GLOBALS['TYPO3_DB']->sql_query('COMMIT');
                 }
             }
+        }
 
         return '';
     }
@@ -1967,28 +1968,30 @@ class UrlRewritingHook implements SingletonInterface
             // First, test if there is an entry in cache for the alias
             if ($cfg['useUniqueCache'] && $returnId = $this->lookUp_uniqAliasToId($cfg, $value)) {
                 return $returnId;
-            }   // If no cached entry, look it up directly in the table:
-                $fieldList[] = $cfg['id_field'];
-                /** @noinspection PhpUndefinedMethodInspection */
-                $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(implode(',', $fieldList), $cfg['table'],
-                    $cfg['alias_field'] . '=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($value, $cfg['table']) .
-                    ' ' . $cfg['addWhereClause']);
-                /** @noinspection PhpUndefinedMethodInspection */
-                $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-                /** @noinspection PhpUndefinedMethodInspection */
-                $GLOBALS['TYPO3_DB']->sql_free_result($res);
+            }
+            // If no cached entry, look it up directly in the table:
+            $fieldList[] = $cfg['id_field'];
+            /** @noinspection PhpUndefinedMethodInspection */
+            $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(implode(',', $fieldList), $cfg['table'],
+                $cfg['alias_field'] . '=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($value, $cfg['table']) .
+                ' ' . $cfg['addWhereClause']);
+            /** @noinspection PhpUndefinedMethodInspection */
+            $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+            /** @noinspection PhpUndefinedMethodInspection */
+            $GLOBALS['TYPO3_DB']->sql_free_result($res);
             if ($row) {
                 $returnId = $row[$cfg['id_field']];
 
-                    // If localization is enabled, check if this record is a localized version and if so, find uid of the original version.
-                    if ($langEnabled && $row[$cfg['languageField']] > 0) {
-                        $returnId = $row[$cfg['transOrigPointerField']];
-                    }
+                // If localization is enabled, check if this record is a localized version and if so, find uid of the original version.
+                if ($langEnabled && $row[$cfg['languageField']] > 0) {
+                    $returnId = $row[$cfg['transOrigPointerField']];
+                }
 
-                    // Return the id
-                    return $returnId;
+                // Return the id
+                return $returnId;
             }
-        } else { // Translate an ID to alias string
+        } else {
+            // Translate an ID to alias string
             // Define the language for the alias
             $lang = intval($this->orig_paramKeyValues[$cfg['languageGetVar']]);
             if (GeneralUtility::inList($cfg['languageExceptionUids'], $lang)) { // Might be excepted (like you should for CJK cases which does not translate to ASCII equivalents)
@@ -2000,47 +2003,48 @@ class UrlRewritingHook implements SingletonInterface
                 return $returnAlias;
             }   // If no cached entry, look up alias directly in the table (and possibly store cache value)
 
-                $fieldList[] = $cfg['alias_field'];
-                /** @noinspection PhpUndefinedMethodInspection */
-                $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(implode(',', $fieldList), $cfg['table'],
-                    $cfg['id_field'] . '=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($value, $cfg['table']) .
-                    ' ' . $cfg['addWhereClause']);
-                /** @noinspection PhpUndefinedMethodInspection */
-                $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-                /** @noinspection PhpUndefinedMethodInspection */
-                $GLOBALS['TYPO3_DB']->sql_free_result($res);
+            $fieldList[] = $cfg['alias_field'];
+            /** @noinspection PhpUndefinedMethodInspection */
+            $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(implode(',', $fieldList), $cfg['table'],
+                $cfg['id_field'] . '=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($value, $cfg['table']) .
+                ' ' . $cfg['addWhereClause']);
+            /** @noinspection PhpUndefinedMethodInspection */
+            $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+            /** @noinspection PhpUndefinedMethodInspection */
+            $GLOBALS['TYPO3_DB']->sql_free_result($res);
             if ($row) {
                 // Looking for localized version of that
-                    if ($langEnabled && $lang) {
-                        // If the lang value is there, look for a localized version of record
-                        /** @noinspection PhpUndefinedMethodInspection */
-                        $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($cfg['alias_field'], $cfg['table'],
-                            $cfg['transOrigPointerField'] . '=' . intval($row['uid']) . '
-                                AND ' . $cfg['languageField'] . '=' . intval($lang) . '
-                                ' . $cfg['addWhereClause']);
-                        /** @noinspection PhpUndefinedMethodInspection */
-                        $lrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-                        /** @noinspection PhpUndefinedMethodInspection */
-                        $GLOBALS['TYPO3_DB']->sql_free_result($res);
-                        if ($lrow) {
-                            $row = $lrow;
-                        }
+                if ($langEnabled && $lang) {
+                    // If the lang value is there, look for a localized version of record
+                    /** @noinspection PhpUndefinedMethodInspection */
+                    $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($cfg['alias_field'], $cfg['table'],
+                        $cfg['transOrigPointerField'] . '=' . intval($row['uid']) . '
+                            AND ' . $cfg['languageField'] . '=' . intval($lang) . '
+                            ' . $cfg['addWhereClause']);
+                    /** @noinspection PhpUndefinedMethodInspection */
+                    $lrow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+                    /** @noinspection PhpUndefinedMethodInspection */
+                    $GLOBALS['TYPO3_DB']->sql_free_result($res);
+                    if ($lrow) {
+                        $row = $lrow;
                     }
+                }
 
                 $maximumAliasLength = min(255, (int)$cfg['maxLength'] ?: $this->maxLookUpLgd);
 
                 if ($cfg['useUniqueCache']) { // If cache is to be used, store the alias in the cache:
-                        /** @var \TYPO3\CMS\Core\Charset\CharsetConverter $csConvObj */
-                        $csConvObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Charset\\CharsetConverter');
+                    /** @var \TYPO3\CMS\Core\Charset\CharsetConverter $csConvObj */
+                    $csConvObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Charset\\CharsetConverter');
                     $aliasValue = $row[$cfg['alias_field']];
                     if ($csConvObj->strlen('utf-8', $aliasValue) > $maximumAliasLength) {
                         $aliasValue = $csConvObj->crop('utf-8', $aliasValue, $maximumAliasLength);
                     }
                     return $this->lookUp_newAlias($cfg, $aliasValue, $value, $lang);
-                }   // If no cache for alias, then just return whatever value is appropriate:
-                        if (strlen($row[$cfg['alias_field']]) <= $maximumAliasLength) {
-                            return $row[$cfg['alias_field']];
-                        }
+                }
+                // If no cache for alias, then just return whatever value is appropriate:
+                if (strlen($row[$cfg['alias_field']]) <= $maximumAliasLength) {
+                    return $row[$cfg['alias_field']];
+                }
                 return $value;
             }
         }
@@ -2649,8 +2653,8 @@ class UrlRewritingHook implements SingletonInterface
                     $host = $parts['host'];
                     if (isset($testedDomains[$host])) {
                         // Redirect loop
-                            /** @noinspection PhpUndefinedMethodInspection */
-                            $GLOBALS['TSFE']->pageUnavailableAndExit('TYPO3 HellUrl has detected a circular redirect in domain records. There was an attempt to redirect to ' . $host . ' from ' . $domain[0]['domainName'] . ' twice.');
+                        /** @noinspection PhpUndefinedMethodInspection */
+                        $GLOBALS['TSFE']->pageUnavailableAndExit('TYPO3 HellUrl has detected a circular redirect in domain records. There was an attempt to redirect to ' . $host . ' from ' . $domain[0]['domainName'] . ' twice.');
                         exit;
                     }
                     $testedDomains[$host] = 1;
