@@ -2,6 +2,9 @@
 defined('TYPO3_MODE') or die('Access denied.');
 
 call_user_func(function ($extensionConfiguration) {
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/install']['update']['Nimut\\Hellurl\\Updates\\RealurlToHellurlUpdate'] =
+        'Nimut\\Hellurl\\Updates\\RealurlToHellurlUpdate';
+
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tstemplate.php']['linkData-PostProc']['tx_hellurl'] = 'Nimut\\Hellurl\\Hooks\\UrlRewritingHook->encodeSpURL';
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_content.php']['typoLink_PostProc']['tx_hellurl'] = 'Nimut\\Hellurl\\Hooks\\UrlRewritingHook->encodeSpURL_urlPrepend';
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_fe.php']['checkAlternativeIdMethods-PostProc']['tx_hellurl'] = 'Nimut\\Hellurl\\Hooks\\UrlRewritingHook->decodeSpURL';
