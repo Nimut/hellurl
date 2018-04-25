@@ -5,7 +5,7 @@
     "homepage": "https://github.com/Nimut/TYPO3-hellurl",
     "license": "GPL-2.0-or-later",
     "require": {
-        "php": ">=5.3.7 <7.2",
+        "php": ">=5.3.7 <7.3",
         "typo3/cms-core": "^6.2.6 || ^7.6 || ^8.7"
     },
     "require-dev": {
