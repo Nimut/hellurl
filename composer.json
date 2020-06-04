@@ -14,7 +14,6 @@
         "phpstan/phpstan": "^0.6"
     },
     "replace": {
-        "hellurl": "self.version",
         "typo3-ter/hellurl": "self.version",
         "helhum/realurl": "*",
         "dmitryd/typo3-realurl": "*",
@@ -34,6 +33,7 @@
             "dev-master": "1.x-dev"
         },
         "typo3/cms": {
+            "extension-key": "hellurl",
             "cms-package-dir": "{$vendor-dir}/typo3/cms",
             "web-dir": ".Build/Web"
         }
